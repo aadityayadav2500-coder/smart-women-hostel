@@ -1,0 +1,50 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# SQLite WAL and temporary files
+*.db-wal
+*.db-shm
+
+# Operating System files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# Temporary locked / draft reports
+SafeStay_Smart_Women_Hostel_Project_Report.docx
+SafeStay_Smart_Women_Hostel_Comprehensive_Report.docx
+SafeStay_Project_Report_88_Pages_Final.docx
+~$*
+

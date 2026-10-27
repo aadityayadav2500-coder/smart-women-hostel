@@ -1,0 +1,3444 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SafeStay — Smart Women Hostel Management System</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --plum: #1c152b;
+      --plum-light: #281e3d;
+      --plum-card: #34274f;
+      --paper: #f8f6f2;
+      --surface: #ffffff;
+      --marigold: #e89b27;
+      --marigold-hover: #d38715;
+      --marigold-soft: rgba(232, 155, 39, 0.12);
+      --sage: #2a8357;
+      --sage-bg: #eaf5ef;
+      --brick: #c24131;
+      --brick-bg: #fbeeed;
+      --ochre: #d97706;
+      --ochre-bg: #fef3c7;
+      --muted: #6b6377;
+      --line: #e7e2d9;
+      --line-subtle: #f0ebe2;
+      --shadow-sm: 0 2px 8px rgba(28, 21, 43, 0.04);
+      --shadow-md: 0 8px 24px rgba(28, 21, 43, 0.07);
+      --shadow-lg: 0 16px 40px rgba(28, 21, 43, 0.12);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--paper);
+      color: var(--plum);
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select, textarea { font-family: inherit; }
+    button { cursor: pointer; border: none; background: none; }
+    
+    .app { min-height: 100vh; display: flex; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 260px;
+      background: var(--plum);
+      color: #fff;
+      padding: 28px 16px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      z-index: 30;
+      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 10px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 20px;
+    }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f5a623, #d97706);
+      display: grid;
+      place-items: center;
+      color: var(--plum);
+      font-weight: 800;
+      font-size: 20px;
+      box-shadow: 0 4px 12px rgba(232, 155, 39, 0.3);
+    }
+    .brand h2 {
+      font-family: 'Fraunces', serif;
+      margin: 0;
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .brand small {
+      display: block;
+      color: #b3a9c4;
+      font-size: 11px;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .portal-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0 10px 18px;
+    }
+    .portal-tag.student { background: rgba(232, 155, 39, 0.18); color: #f8b859; border: 1px solid rgba(232, 155, 39, 0.3); }
+    .portal-tag.warden { background: rgba(42, 131, 87, 0.2); color: #6ee7b7; border: 1px solid rgba(42, 131, 87, 0.3); }
+    .portal-tag.admin { background: rgba(194, 65, 49, 0.2); color: #fca5a5; border: 1px solid rgba(194, 65, 49, 0.3); }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+    .nav button {
+      color: #c5bcd3;
+      text-align: left;
+      padding: 12px 14px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.18s ease;
+    }
+    .nav button:hover {
+      background: rgba(255, 255, 255, 0.07);
+      color: #fff;
+    }
+    .nav button.active {
+      background: rgba(232, 155, 39, 0.16);
+      color: #fff;
+      position: relative;
+      font-weight: 700;
+    }
+    .nav button.active:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 8px;
+      width: 4px;
+      border-radius: 0 4px 4px 0;
+      background: var(--marigold);
+    }
+    .nav-icon {
+      font-size: 17px;
+      opacity: 0.9;
+      width: 22px;
+      text-align: center;
+    }
+
+    .sidebar-footer {
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .sidebar-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+    }
+    .sidebar-user .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--marigold);
+      color: var(--plum);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 15px;
+    }
+    .sidebar-user-info { flex: 1; min-width: 0; }
+    .sidebar-user-name { font-weight: 700; font-size: 13px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-user-sub { font-size: 11px; color: #a9a0b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    .btn-logout {
+      width: 100%;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #e5e0ec;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .btn-logout:hover {
+      background: rgba(194, 65, 49, 0.2);
+      color: #fca5a5;
+      border-color: rgba(194, 65, 49, 0.4);
+    }
+
+    /* MAIN CONTENT */
+    .main {
+      margin-left: 260px;
+      flex: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .topbar {
+      height: 76px;
+      background: rgba(248, 246, 242, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 36px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .page-title {
+      font-family: 'Fraunces', serif;
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -0.4px;
+    }
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .server-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 99px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .status-dot.online { background: #10b981; box-shadow: 0 0 8px #10b981; }
+    .status-dot.offline { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+
+    .content {
+      padding: 36px;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+      flex: 1;
+    }
+
+    .greeting {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+    .greeting h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 34px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+    .muted { color: var(--muted); font-size: 14px; }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: var(--radius-sm);
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      transition: all 0.16s ease;
+      cursor: pointer;
+    }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn.primary {
+      background: var(--marigold);
+      color: var(--plum);
+      box-shadow: 0 4px 14px rgba(232, 155, 39, 0.25);
+    }
+    .btn.primary:hover:not(:disabled) {
+      background: var(--marigold-hover);
+      transform: translateY(-1px);
+    }
+    .btn.secondary { background: var(--plum); color: #fff; }
+    .btn.secondary:hover:not(:disabled) { background: #2f2348; }
+    .btn.ghost {
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--plum);
+    }
+    .btn.ghost:hover:not(:disabled) {
+      background: #f7f4ee;
+      border-color: #d8d0c2;
+    }
+    .btn.danger { background: var(--brick-bg); color: var(--brick); }
+    .btn.danger:hover:not(:disabled) { background: #f7deda; }
+    .btn.success { background: var(--sage-bg); color: var(--sage); }
+    .btn.success:hover:not(:disabled) { background: #d7ede1; }
+
+    /* CARDS & GRIDS */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: 22px;
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .card:hover { box-shadow: var(--shadow-md); border-color: #ded6c9; }
+    .grid { display: grid; gap: 20px; }
+    .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 24px; }
+    .two { grid-template-columns: 1.5fr 1fr; }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .stat {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      cursor: default;
+    }
+    .stat-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: #f3efe8;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-label {
+      font-weight: 700;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+    .stat-context {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .section-head h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 21px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .badge.sage { background: var(--sage-bg); color: var(--sage); }
+    .badge.ochre { background: var(--ochre-bg); color: var(--ochre); }
+    .badge.brick { background: var(--brick-bg); color: var(--brick); }
+    .badge.plum { background: #efeaf5; color: #4b3668; }
+
+    /* SAFE RETURN RING */
+    .ring-wrap {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+    .ring {
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(var(--sage) 0 72%, #ece7de 72%);
+      position: relative;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(42, 131, 87, 0.15);
+    }
+    .ring.late {
+      background: conic-gradient(var(--brick) 0 92%, #ece7de 92%);
+      box-shadow: 0 4px 16px rgba(194, 65, 49, 0.2);
+    }
+    .ring:after {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .ring-inner {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+    .ring-time {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      font-variant-numeric: tabular-nums;
+    }
+    .ring small {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* TABLES */
+    .table-wrap { overflow-x: auto; margin: 0 -4px; }
+    .table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    .table th {
+      text-align: left;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--line);
+      background: #fff;
+    }
+    .table td {
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+    .table tr:hover td { background: #faf8f5; }
+
+    /* FORMS */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { font-size: 13px; font-weight: 700; color: #433952; }
+    .input, .select, .textarea {
+      border: 1px solid #dcd5cc;
+      background: #fff;
+      border-radius: 9px;
+      padding: 11px 14px;
+      color: var(--plum);
+      outline: none;
+      font-size: 14px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .input:focus, .select:focus, .textarea:focus {
+      border-color: var(--marigold);
+      box-shadow: 0 0 0 3px rgba(232, 155, 39, 0.18);
+    }
+    .textarea { min-height: 110px; resize: vertical; }
+
+    /* TABS */
+    .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+    .tab {
+      padding: 11px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--muted);
+      border-bottom: 3px solid transparent;
+      transition: all 0.15s ease;
+    }
+    .tab:hover { color: var(--plum); }
+    .tab.active { color: var(--plum); border-color: var(--marigold); }
+
+    /* CHARTS */
+    .chart {
+      height: 220px;
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+      padding: 20px 10px 5px;
+    }
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    .bar {
+      width: 75%;
+      max-width: 52px;
+      background: linear-gradient(180deg, var(--plum-card), var(--plum));
+      border-radius: 8px 8px 0 0;
+      min-height: 6px;
+      transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .bar-label { font-size: 11px; font-weight: 600; color: var(--muted); }
+    .bar-value { font-size: 11px; font-weight: 800; }
+
+    /* ALERTS & BOXES */
+    .alert { padding: 13px 16px; border-radius: 10px; background: #fff2ef; border: 1px solid #f9cac2; color: #8c2b1e; font-size: 13px; font-weight: 600; }
+    .success-box { padding: 13px 16px; border-radius: 10px; background: #eef7f2; border: 1px solid #c8e6d4; color: #1e6340; font-size: 13px; font-weight: 600; }
+    .quick { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .list { display: flex; flex-direction: column; gap: 8px; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+    .row:last-child { border-bottom: none; }
+    .notice.priority { border-left: 4px solid var(--brick); padding-left: 12px; }
+    .notice-title { font-weight: 700; font-size: 14px; }
+    .notice-meta { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+    /* QR BOARDING PASS CARD */
+    .gate-pass-card {
+      background: linear-gradient(135deg, #ffffff 0%, #fdfbf7 100%);
+      border: 2px dashed #dcd5ca;
+      border-radius: var(--radius-md);
+      padding: 24px;
+      text-align: center;
+      position: relative;
+    }
+    .qr-box {
+      width: 160px;
+      height: 160px;
+      margin: 14px auto;
+      background: repeating-conic-gradient(#1c152b 0 25%, #ffffff 0 50%) 0 / 18px 18px;
+      border: 8px solid #fff;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      outline: 1px solid #e0d8cc;
+      border-radius: 8px;
+    }
+
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(28, 21, 43, 0.55);
+      backdrop-filter: blur(4px);
+      z-index: 60;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+    .modal {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      max-width: 620px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px;
+      box-shadow: var(--shadow-lg);
+      animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modalFadeIn { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-head h2 { font-family: 'Fraunces', serif; font-size: 24px; margin: 0; font-weight: 600; }
+    .close {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: #f2eee8;
+      display: grid;
+      place-items: center;
+      font-size: 19px;
+      color: var(--plum);
+      transition: all 0.15s ease;
+    }
+    .close:hover { background: #e5dfd6; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+
+    /* TOAST */
+    .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 100; display: flex; flex-direction: column; gap: 10px; }
+    .toast {
+      background: var(--plum);
+      color: #fff;
+      padding: 14px 22px;
+      border-radius: 12px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.25);
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: toastSlide 0.25s ease;
+    }
+    .toast.success { border-left: 6px solid #10b981; }
+    .toast.error { border-left: 6px solid #ef4444; }
+    @keyframes toastSlide { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    /* SEPARATED PORTAL LOGIN SYSTEM */
+    .portal-login-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      background: radial-gradient(circle at 50% 15%, #ffffff 0%, var(--paper) 100%);
+    }
+    .login-container {
+      width: 100%;
+      max-width: 580px;
+    }
+    .portal-selector-bar {
+      display: flex;
+      background: #eae4d8;
+      padding: 6px;
+      border-radius: 16px;
+      gap: 6px;
+      margin-bottom: 22px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
+    }
+    .portal-pill {
+      flex: 1;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #5d536a;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .portal-pill:hover { color: var(--plum); }
+    .portal-pill.active {
+      background: #fff;
+      color: var(--plum);
+      box-shadow: 0 4px 14px rgba(28, 21, 43, 0.08);
+    }
+    .login-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow-lg);
+      padding: 36px;
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+    .login-header h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 600;
+      margin-top: 10px;
+      margin-bottom: 6px;
+      letter-spacing: -0.4px;
+    }
+    .student-chips {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .student-chip {
+      padding: 9px 8px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #faf8f5;
+      font-size: 12px;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+    .student-chip:hover {
+      border-color: var(--marigold);
+      background: #fff;
+      transform: translateY(-1px);
+    }
+    .student-chip.active {
+      border-color: var(--marigold);
+      background: var(--marigold-soft);
+      box-shadow: 0 0 0 2px var(--marigold);
+    }
+    .student-chip-name { font-weight: 700; color: var(--plum); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .student-chip-room { font-size: 11px; color: var(--muted); }
+
+    .mobile-nav { display: none; }
+
+    @media(max-width: 950px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .mobile-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        background: #fff;
+        border-top: 1px solid var(--line);
+        z-index: 40;
+        justify-content: space-around;
+        padding: 8px;
+        box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+      }
+      .mobile-nav button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--muted);
+        padding: 4px;
+      }
+      .mobile-nav button.active { color: var(--plum); font-weight: 800; }
+      .content { padding: 20px 16px 90px; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .two, .three { grid-template-columns: 1fr; }
+      .topbar { padding: 0 16px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .student-chips { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useCallback, useMemo } = React;
+
+const API_BASE = window.location.origin.startsWith('http') ? window.location.origin : 'http://127.0.0.1:5000';
+
+
+// ==========================================
+// CLIENT-SIDE MOCK ENGINE FOR GITHUB PAGES
+// (Activates automatically when backend is not running or on github.io)
+// ==========================================
+let isStaticHosting = window.location.hostname.includes('github.io') || window.location.protocol === 'file:';
+
+const INITIAL_MOCK_STATE = {
+  users: [
+    { id: 1, user_code: "STU-2048", role: "Student", name: "Sanskruti Patil", email: "sanskruti@example.com", phone: "+91 98765 43021", room: "A-204", course: "B.Tech Computer Science", warden_name: "Meera Sharma", emergency_name: "Rajesh Patil", emergency_phone: "+91 98765 11111", status: "Active", curfew_status: "Out", password: "password" },
+    { id: 2, user_code: "STU-1001", role: "Student", name: "Aarushi Patel", email: "aarushi@example.com", phone: "98765 12001", room: "A-101", course: "B.Sc IT", warden_name: "Meera Sharma", emergency_name: "Sanjay Patel", emergency_phone: "+91 98765 11001", status: "Active", curfew_status: "In", password: "password" },
+    { id: 3, user_code: "STU-1002", role: "Student", name: "Diya Shah", email: "diya@example.com", phone: "98765 12002", room: "A-102", course: "B.Com", warden_name: "Meera Sharma", emergency_name: "Kishore Shah", emergency_phone: "+91 98765 11002", status: "Active", curfew_status: "In", password: "password" },
+    { id: 4, user_code: "STU-1003", role: "Student", name: "Isha Nair", email: "isha@example.com", phone: "98765 12003", room: "A-103", course: "B.A Psychology", warden_name: "Meera Sharma", emergency_name: "Mohan Nair", emergency_phone: "+91 98765 11003", status: "Active", curfew_status: "Out", password: "password" },
+    { id: 5, user_code: "STU-1004", role: "Student", name: "Kavya Singh", email: "kavya@example.com", phone: "98765 12004", room: "A-104", course: "B.Tech Mechanical", warden_name: "Meera Sharma", emergency_name: "Vikram Singh", emergency_phone: "+91 98765 11004", status: "Active", curfew_status: "In", password: "password" },
+    { id: 6, user_code: "STU-2001", role: "Student", name: "Meera Joshi", email: "meera.j@example.com", phone: "98765 12005", room: "A-201", course: "B.Sc Biotech", warden_name: "Meera Sharma", emergency_name: "Anand Joshi", emergency_phone: "+91 98765 11005", status: "Active", curfew_status: "Out", password: "password" },
+    { id: 7, user_code: "STU-2002", role: "Student", name: "Nandini Rao", email: "nandini@example.com", phone: "98765 12006", room: "A-202", course: "B.Arch", warden_name: "Meera Sharma", emergency_name: "Venkat Rao", emergency_phone: "+91 98765 11006", status: "Active", curfew_status: "In", password: "password" },
+    { id: 8, user_code: "STU-2003", role: "Student", name: "Priya Verma", email: "priya@example.com", phone: "98765 12007", room: "A-203", course: "B.Sc Physics", warden_name: "Meera Sharma", emergency_name: "Ramesh Verma", emergency_phone: "+91 98765 11007", status: "Active", curfew_status: "In", password: "password" },
+    { id: 9, user_code: "STU-2004", role: "Student", name: "Riya Das", email: "riya@example.com", phone: "98765 12008", room: "A-204", course: "B.Tech Computer Science", warden_name: "Meera Sharma", emergency_name: "Subir Das", emergency_phone: "+91 98765 11008", status: "Active", curfew_status: "In", password: "password" },
+    { id: 10, user_code: "WARD-001", role: "Warden", name: "Meera Sharma", email: "warden@example.com", phone: "+91 98765 20001", room: "Warden Office, Block A", course: "Staff", warden_name: "Chief Warden", emergency_name: "Hostel Office", emergency_phone: "+91 98765 20000", status: "Active", curfew_status: "In", password: "password" },
+    { id: 11, user_code: "ADMIN-001", role: "Admin", name: "Hostel Admin", email: "admin@example.com", phone: "+91 98765 30001", room: "Admin Office", course: "Staff", warden_name: "Management", emergency_name: "Trust Office", emergency_phone: "+91 98765 30000", status: "Active", curfew_status: "In", password: "password" }
+  ],
+  notices: [
+    { id: 1, title: "Overhead Water Tank Cleaning Notice", body: "Water supply will remain suspended in Wing A from 9:00 AM to 12:30 PM this Friday for scheduled deep sanitization.", by_role: "Warden", priority: 1, time_str: "Today, 10:15 AM", expiry_date: "2026-11-01", acknowledged_by: "[]" },
+    { id: 2, title: "Sunday Special Dinner Feast", body: "North Indian Thali with Paneer Butter Masala, fresh Phulkas, Jeera Rice, and Hot Gulab Jamun served 7:30 PM to 9:30 PM.", by_role: "Warden", priority: 0, time_str: "Yesterday, 06:40 PM", expiry_date: "", acknowledged_by: "[]" },
+    { id: 3, title: "Mandatory Campus Fire Safety Inspection Drill", body: "Annual emergency evacuation drill scheduled for Saturday at 10:00 AM in the Central Courtyard. Attendance is compulsory.", by_role: "Admin", priority: 1, time_str: "24 Oct, 04:30 PM", expiry_date: "2026-10-31", acknowledged_by: "[]" }
+  ],
+  complaints: [
+    { id: 1, complaint_code: "CMP-1042", student_code: "STU-2048", student_name: "Sanskruti Patil", room: "A-204", category: "Maintenance", title: "Bathroom tap leakage", description: "The cold water tap in bathroom A-204 is continuously dripping.", status: "In Progress", date_str: "27 Aug" },
+    { id: 2, complaint_code: "CMP-1038", student_code: "STU-2004", student_name: "Riya Das", room: "A-204", category: "Internet", title: "Wi-Fi not working in room", description: "Wi-Fi signal drops frequently on 2nd floor wing A.", status: "Pending", date_str: "25 Aug" },
+    { id: 3, complaint_code: "CMP-1029", student_code: "STU-1001", student_name: "Aarushi Patel", room: "A-101", category: "Mess", title: "Mess food too salty", description: "Dinner dal was excessively salty on Thursday evening.", status: "Solved", date_str: "21 Aug" },
+    { id: 4, complaint_code: "CMP-1025", student_code: "STU-1004", student_name: "Kavya Singh", room: "A-104", category: "Safety", title: "Corridor bulb flickering", description: "Corridor light outside room 104 needs replacement.", status: "Solved", date_str: "18 Aug" }
+  ],
+  exit_requests: [
+    { id: 1, request_code: "EX-2048", student_code: "STU-2048", student_name: "Sanskruti Patil", room: "A-204", date_str: "27 Aug", time_out: "8:10 PM", expected_return: "11:30 PM", actual_exit: "8:10 PM", actual_entry: null, reason: "Personal", status: "Approved" },
+    { id: 2, request_code: "EX-2050", student_code: "STU-2004", student_name: "Riya Das", room: "A-204", date_str: "27 Aug", time_out: "8:00 PM", expected_return: "11:30 PM", actual_exit: null, actual_entry: null, reason: "Personal", status: "Pending" },
+    { id: 3, request_code: "EX-2051", student_code: "STU-1002", student_name: "Diya Shah", room: "A-102", date_str: "28 Aug", time_out: "5:30 PM", expected_return: "9:30 PM", actual_exit: null, actual_entry: null, reason: "College work", status: "Pending" },
+    { id: 4, request_code: "EX-2052", student_code: "STU-2003", student_name: "Priya Verma", room: "A-203", date_str: "29 Aug", time_out: "6:00 PM", expected_return: "10:30 PM", actual_exit: null, actual_entry: null, reason: "Family event", status: "Approved" }
+  ],
+  rent_records: [
+    { id: 1, student_code: "STU-2048", student_name: "Sanskruti Patil", room: "A-204", month: "October 2026", amount: 8500, due_date: "05 Nov 2026", paid_on: null, status: "Due", receipt_no: null },
+    { id: 2, student_code: "STU-2048", student_name: "Sanskruti Patil", room: "A-204", month: "September 2026", amount: 8500, due_date: "05 Oct 2026", paid_on: "03 Oct 2026", status: "Paid", receipt_no: "REC-9042" },
+    { id: 3, student_code: "STU-1001", student_name: "Aarushi Patel", room: "A-101", month: "October 2026", amount: 8500, due_date: "05 Nov 2026", paid_on: "02 Oct 2026", status: "Paid", receipt_no: "REC-9011" },
+    { id: 4, student_code: "STU-1002", student_name: "Diya Shah", room: "A-102", month: "October 2026", amount: 8500, due_date: "05 Nov 2026", paid_on: null, status: "Due", receipt_no: null },
+    { id: 5, student_code: "STU-1004", student_name: "Kavya Singh", room: "A-104", month: "October 2026", amount: 8500, due_date: "05 Nov 2026", paid_on: null, status: "Overdue", receipt_no: null }
+  ],
+  staff: [
+    { id: 1, name: "Meera Sharma", role: "Chief Warden", block_floor: "Block A • All Floors", contact: "+91 98765 20001", status: "Approved" },
+    { id: 2, name: "Sunita Kulkarni", role: "Assistant Warden", block_floor: "Block A • Floor 2", contact: "+91 98765 20002", status: "Approved" },
+    { id: 3, name: "Rekha Shinde", role: "Night Security Officer", block_floor: "Hostel Main Gate 1", contact: "+91 98765 20003", status: "Approved" }
+  ],
+  settings: {
+    hostel_name: "SafeStay Smart Women Hostel",
+    capacity: "200",
+    occupied: "184",
+    curfew_time: "23:30",
+    last_backup: "Today 03:00 AM (hostel_backup.db)"
+  },
+  mess_feedback: [
+    { id: 1, student_code: "STU-2048", student_name: "Sanskruti Patil", day_of_week: "Thursday", meal_type: "Lunch", rating: 5, comment: "Paneer butter masala and dal were very flavorful!", addressed: 1 },
+    { id: 2, student_code: "STU-1002", student_name: "Diya Shah", day_of_week: "Wednesday", meal_type: "Breakfast", rating: 4, comment: "Poha was soft, please keep providing fresh lemon slices.", addressed: 0 }
+  ]
+};
+
+function getMockState() {
+  try {
+    const saved = localStorage.getItem('safestay_mock_state');
+    if (saved) return JSON.parse(saved);
+  } catch(e) {}
+  return INITIAL_MOCK_STATE;
+}
+
+function saveMockState(state) {
+  try {
+    localStorage.setItem('safestay_mock_state', JSON.stringify(state));
+  } catch(e) {}
+}
+
+async function handleMockApi(path, options = {}) {
+  const method = (options.method || 'GET').toUpperCase();
+  const body = options.body ? JSON.parse(options.body) : {};
+  const [cleanPath, queryString] = path.split('?');
+  const params = new URLSearchParams(queryString || '');
+  const state = getMockState();
+
+  // /api/health
+  if (cleanPath === '/api/health') {
+    return { status: "healthy", service: "SafeStay Hybrid Client", timestamp: new Date().toISOString() };
+  }
+
+  // /api/public/students
+  if (cleanPath === '/api/public/students') {
+    const list = state.users.filter(u => u.role === 'Student').map(u => ({
+      user_code: u.user_code, name: u.name, room: u.room, course: u.course, curfew_status: u.curfew_status
+    }));
+    return { success: true, students: list };
+  }
+
+  // /api/login
+  if (cleanPath === '/api/login' && method === 'POST') {
+    const user = state.users.find(u => u.user_code.toUpperCase() === (body.user_code || '').trim().toUpperCase() && u.role === body.role);
+    if (!user) throw new Error(`No ${body.role} account found with ID '${body.user_code}'`);
+    if (user.password !== body.password) throw new Error("Incorrect password. Please try again.");
+    const safeUser = { ...user };
+    delete safeUser.password;
+    return { success: true, user: safeUser };
+  }
+
+  // /api/profile
+  if (cleanPath === '/api/profile') {
+    const userCode = params.get('user_code') || body.user_code || 'STU-2048';
+    const userIdx = state.users.findIndex(u => u.user_code === userCode);
+    if (userIdx === -1) throw new Error("User not found");
+    if (method === 'PUT') {
+      state.users[userIdx] = { ...state.users[userIdx], ...body };
+      saveMockState(state);
+      const safe = { ...state.users[userIdx] };
+      delete safe.password;
+      return { success: true, message: "Profile updated successfully", user: safe };
+    }
+    const safe = { ...state.users[userIdx] };
+    delete safe.password;
+    return { success: true, user: safe };
+  }
+
+  // /api/stats/student
+  if (cleanPath === '/api/stats/student') {
+    const userCode = params.get('user_code') || 'STU-2048';
+    const rent = state.rent_records.filter(r => r.student_code === userCode).pop();
+    const activeExit = state.exit_requests.filter(e => e.student_code === userCode && e.status === 'Approved').pop();
+    const activeComplaints = state.complaints.filter(c => c.student_code === userCode && c.status !== 'Solved').length;
+    return {
+      success: true,
+      rent: {
+        amount: rent ? `₹${rent.amount.toLocaleString()}` : "₹0",
+        status: rent ? rent.status : "Paid",
+        due_date: rent ? rent.due_date : "—"
+      },
+      active_complaints: activeComplaints,
+      mess_rating: "4.3/5",
+      priority_notices: state.notices.filter(n => n.priority).length,
+      active_exit: activeExit || null,
+      activities: [
+        { action: "Logged in securely", created_at: "Just now" },
+        { action: "Checked curfew countdown", created_at: "5 mins ago" }
+      ]
+    };
+  }
+
+  // /api/stats/warden
+  if (cleanPath === '/api/stats/warden') {
+    const pendingExits = state.exit_requests.filter(e => e.status === 'Pending').length;
+    const openComplaints = state.complaints.filter(c => c.status !== 'Solved').length;
+    const outStudents = state.users.filter(u => u.role === 'Student' && u.curfew_status === 'Out');
+    return {
+      success: true,
+      pending_exits: pendingExits,
+      unattended_complaints: openComplaints,
+      attendance_pending: 0,
+      currently_out_count: outStudents.length,
+      mess_rating: "4.3/5",
+      past_curfew: 1,
+      currently_out: outStudents.map(s => ({
+        name: s.name, room: s.room, user_code: s.user_code, time_str: "01:45", late: false, expected_return: "11:30 PM"
+      })),
+      activities: [
+        { action: "QR Gate scan verified — Sanskruti Patil", created_at: "18:45 PM" },
+        { action: "Night roll call locked for Wing A", created_at: "21:30 PM" }
+      ]
+    };
+  }
+
+  // /api/stats/admin
+  if (cleanPath === '/api/stats/admin') {
+    return {
+      success: true,
+      occupancy: { percent: "95%", text: "190 / 200 beds", trend: [88, 89, 90, 91, 93, 94, 95] },
+      rent: { collected: "₹15.20L", due: "₹85.00K", overdue: "₹25K", aging: [45, 28, 17, 10] },
+      complaints: { open: 3, escalated: 1, categories: { labels: ["Maintenance", "Mess", "Internet", "Safety"], values: [42, 27, 18, 13] } },
+      past_curfew: 2
+    };
+  }
+
+  // /api/students
+  if (cleanPath === '/api/students') {
+    if (method === 'POST') {
+      const newId = `STU-${2050 + state.users.length}`;
+      const newStudent = {
+        id: state.users.length + 1,
+        user_code: newId,
+        role: "Student",
+        name: body.name || "New Resident",
+        email: body.email || `${(body.name || 'student').toLowerCase().replace(/\s+/g, '')}@example.com`,
+        phone: body.phone || "+91 98765 00000",
+        room: body.room || "A-105",
+        course: body.course || "B.Tech",
+        warden_name: "Meera Sharma",
+        emergency_name: "Guardian",
+        emergency_phone: body.phone || "+91 98765 00000",
+        status: "Active",
+        curfew_status: "In",
+        password: "password"
+      };
+      state.users.push(newStudent);
+      state.rent_records.push({
+        id: state.rent_records.length + 1,
+        student_code: newId,
+        student_name: newStudent.name,
+        room: newStudent.room,
+        month: "October 2026",
+        amount: 8500,
+        due_date: "05 Nov 2026",
+        status: "Due"
+      });
+      saveMockState(state);
+      return { success: true, message: "Student enrolled successfully", user_code: newId };
+    }
+    const safeStudents = state.users.filter(u => u.role === 'Student').map(u => {
+      const copy = { ...u };
+      delete copy.password;
+      const rent = state.rent_records.filter(r => r.student_code === u.user_code).pop();
+      copy.rent_status = rent ? rent.status : "Due";
+      return copy;
+    });
+    return { success: true, students: safeStudents };
+  }
+
+  // /api/notices
+  if (cleanPath === '/api/notices') {
+    if (method === 'POST') {
+      const newNotice = {
+        id: state.notices.length + 1,
+        title: body.title,
+        body: body.body,
+        by_role: body.by_role || "Warden",
+        priority: body.priority ? 1 : 0,
+        time_str: "Today, " + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        expiry_date: body.expiry_date || "",
+        acknowledged_by: "[]"
+      };
+      state.notices.unshift(newNotice);
+      saveMockState(state);
+      return { success: true, message: "Notice published successfully" };
+    }
+    return { success: true, notices: state.notices };
+  }
+
+  if (cleanPath.startsWith('/api/notices/') && cleanPath.endsWith('/acknowledge')) {
+    const id = parseInt(cleanPath.split('/')[3]);
+    const notice = state.notices.find(n => n.id === id);
+    if (notice) {
+      let acks = [];
+      try { acks = JSON.parse(notice.acknowledged_by || "[]"); } catch(e) {}
+      if (!acks.includes(body.user_code)) acks.push(body.user_code);
+      notice.acknowledged_by = JSON.stringify(acks);
+      saveMockState(state);
+    }
+    return { success: true, message: "Notice acknowledged" };
+  }
+
+  if (cleanPath.startsWith('/api/notices/') && method === 'DELETE') {
+    const id = parseInt(cleanPath.split('/')[3]);
+    state.notices = state.notices.filter(n => n.id !== id);
+    saveMockState(state);
+    return { success: true, message: "Notice deleted" };
+  }
+
+  // /api/complaints
+  if (cleanPath === '/api/complaints') {
+    if (method === 'POST') {
+      const newC = {
+        id: state.complaints.length + 1,
+        complaint_code: `CMP-${1050 + state.complaints.length}`,
+        student_code: body.student_code || "STU-2048",
+        student_name: "Sanskruti Patil",
+        room: body.room || "A-204",
+        category: body.category || "Maintenance",
+        title: body.title || "Facility Issue",
+        description: body.description || "",
+        status: "Pending",
+        date_str: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+      };
+      state.complaints.unshift(newC);
+      saveMockState(state);
+      return { success: true, message: `Complaint ${newC.complaint_code} raised successfully`, complaint_code: newC.complaint_code };
+    }
+    const studentCode = params.get('student_code');
+    const filtered = studentCode ? state.complaints.filter(c => c.student_code === studentCode) : state.complaints;
+    return { success: true, complaints: filtered };
+  }
+
+  if (cleanPath.startsWith('/api/complaints/') && cleanPath.endsWith('/status')) {
+    const id = parseInt(cleanPath.split('/')[3]);
+    const comp = state.complaints.find(c => c.id === id);
+    if (comp) comp.status = body.status;
+    saveMockState(state);
+    return { success: true, message: `Status updated to ${body.status}` };
+  }
+
+  // /api/exit-requests
+  if (cleanPath === '/api/exit-requests') {
+    if (method === 'POST') {
+      const newE = {
+        id: state.exit_requests.length + 1,
+        request_code: `EX-${2060 + state.exit_requests.length}`,
+        student_code: body.student_code || "STU-2048",
+        student_name: "Sanskruti Patil",
+        room: "A-204",
+        date_str: body.date_str || "Today",
+        time_out: body.time_out || "08:00 PM",
+        expected_return: body.expected_return || "11:30 PM",
+        reason: body.reason || "Personal",
+        status: "Pending"
+      };
+      state.exit_requests.unshift(newE);
+      saveMockState(state);
+      return { success: true, message: `Leave request ${newE.request_code} submitted`, request_code: newE.request_code };
+    }
+    const studentCode = params.get('student_code');
+    const filtered = studentCode ? state.exit_requests.filter(e => e.student_code === studentCode) : state.exit_requests;
+    return { success: true, requests: filtered };
+  }
+
+  if (cleanPath.startsWith('/api/exit-requests/') && cleanPath.endsWith('/action')) {
+    const id = parseInt(cleanPath.split('/')[3]);
+    const req = state.exit_requests.find(e => e.id === id);
+    if (req) req.status = body.action === 'approve' ? 'Approved' : 'Rejected';
+    saveMockState(state);
+    return { success: true, message: `Leave pass ${body.action}d!` };
+  }
+
+  // /api/gate/scan
+  if (cleanPath === '/api/gate/scan') {
+    const code = (body.code || '').trim().toUpperCase();
+    const user = state.users.find(u => u.user_code === code || u.room === code || u.name.toUpperCase().includes(code));
+    if (!user) throw new Error(`Code '${code}' not recognized.`);
+    const newStatus = user.curfew_status === 'In' ? 'Out' : 'In';
+    user.curfew_status = newStatus;
+    saveMockState(state);
+    const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const msg = newStatus === 'In'
+      ? `✓ Gate ENTRY logged: ${user.name} (Room ${user.room}) entered safely at ${timeNow}`
+      : `✓ Gate EXIT logged: ${user.name} (Room ${user.room}) departed at ${timeNow}`;
+    return { success: true, message: msg, student: user.name, room: user.room, curfew_status: newStatus, time: timeNow };
+  }
+
+  // /api/rent
+  if (cleanPath === '/api/rent') {
+    const studentCode = params.get('student_code');
+    const filtered = studentCode ? state.rent_records.filter(r => r.student_code === studentCode) : state.rent_records;
+    return { success: true, records: filtered };
+  }
+
+  if (cleanPath === '/api/rent/pay') {
+    const recId = body.record_id;
+    const rec = state.rent_records.find(r => r.id === recId) || state.rent_records[0];
+    if (rec) {
+      rec.status = 'Paid';
+      rec.paid_on = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      rec.receipt_no = `REC-${Date.now().toString().slice(-6)}`;
+      saveMockState(state);
+      return { success: true, message: `Payment successful. Receipt #${rec.receipt_no}`, receipt_no: rec.receipt_no };
+    }
+    return { success: true, message: "Payment processed", receipt_no: "REC-9482" };
+  }
+
+  if (cleanPath === '/api/rent/remind') {
+    return { success: true, message: "Payment reminder notifications dispatched to 4 students." };
+  }
+
+  // /api/attendance
+  if (cleanPath === '/api/attendance') {
+    const records = state.users.filter(u => u.role === 'Student').map(s => ({
+      student_code: s.user_code, name: s.name, room: s.room, course: s.course, status: "Present"
+    }));
+    return { success: true, records };
+  }
+
+  // /api/mess/menu
+  if (cleanPath === '/api/mess/menu') {
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const menu = {};
+    days.forEach(d => {
+      menu[d] = {
+        Breakfast: "Poha, boiled eggs / sprouts, filter coffee & tea",
+        Lunch: "Dal Tadka, paneer butter masala, steamed rice, roti & salad",
+        Snacks: "Vegetable cutlets / samosas, ginger tea",
+        Dinner: "Aloo gobi matar, moong dal, phulkas, jeera rice & gulab jamun"
+      };
+    });
+    return { success: true, menu };
+  }
+
+  // /api/mess/feedback
+  if (cleanPath === '/api/mess/feedback') {
+    if (method === 'POST') {
+      state.mess_feedback.unshift({
+        id: state.mess_feedback.length + 1,
+        student_code: body.student_code,
+        student_name: "Sanskruti Patil",
+        day_of_week: body.day_of_week,
+        meal_type: body.meal_type,
+        rating: body.rating,
+        comment: body.comment || "Great meal taste and hygiene."
+      });
+      saveMockState(state);
+      return { success: true, message: "Feedback submitted successfully. Thank you!" };
+    }
+    return {
+      success: true,
+      averages: [4.5, 4.2, 4.0, 4.4, 3.8, 4.1, 4.6],
+      days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      comments: state.mess_feedback
+    };
+  }
+
+  // /api/staff
+  if (cleanPath === '/api/staff') {
+    if (method === 'POST') {
+      state.staff.push({ id: state.staff.length + 1, name: body.name, role: body.role, block_floor: body.block_floor, contact: body.contact, status: "Approved" });
+      saveMockState(state);
+      return { success: true, message: "Staff member added successfully" };
+    }
+    return { success: true, staff: state.staff };
+  }
+
+  // /api/settings
+  if (cleanPath === '/api/settings') {
+    if (method === 'PUT') {
+      state.settings = { ...state.settings, ...body };
+      saveMockState(state);
+      return { success: true, message: "Settings updated successfully" };
+    }
+    return { success: true, settings: state.settings };
+  }
+
+  // /api/backup
+  if (cleanPath === '/api/backup') {
+    state.settings.last_backup = new Date().toLocaleString() + " (live_snapshot.db)";
+    saveMockState(state);
+    return { success: true, message: "Database hot backup snapshot created successfully!", last_backup: state.settings.last_backup };
+  }
+
+  // /api/reports/generate
+  if (cleanPath === '/api/reports/generate') {
+    const csvContent = "data:text/csv;charset=utf-8,ID,Name,Room,Status,Date\n1,Sanskruti Patil,A-204,Active,2026-10-27\n2,Aarushi Patel,A-101,Active,2026-10-27";
+    return { success: true, message: "Report generated successfully", download_url: csvContent };
+  }
+
+  return { success: true };
+}
+
+async function api(path, options = {}) {
+  // If not on static host, attempt connection to local Flask backend first
+  if (!isStaticHosting) {
+    try {
+      const url = `${API_BASE}${path}`;
+      const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+      const res = await fetch(url, { ...options, headers });
+      if (res.ok) {
+        return await res.json();
+      }
+      if (res.status === 404 && !window.location.host.includes('127.0.0.1') && !window.location.host.includes('localhost')) {
+        isStaticHosting = true;
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || `Request failed (${res.status})`);
+      }
+    } catch (err) {
+      if (!window.location.host.includes('127.0.0.1') && !window.location.host.includes('localhost')) {
+        isStaticHosting = true;
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  // Fallback to client-side reactive mock engine for GitHub Pages
+  return handleMockApi(path, options);
+}
+
+
+// ==========================================
+// BADGE, STAT, RING COMPONENTS
+// ==========================================
+function Badge({ status }) {
+  const map = {
+    Pending: "ochre", "In Progress": "ochre", Solved: "sage", Paid: "sage",
+    Due: "ochre", Overdue: "brick", Approved: "sage", Rejected: "brick",
+    In: "sage", Out: "brick", Active: "sage", Inactive: "brick",
+    Completed: "sage", "On-Leave": "ochre", "Breach Alert": "brick",
+    Present: "sage", Absent: "brick"
+  };
+  return <span className={"badge " + (map[status] || "plum")}>● {status}</span>;
+}
+
+function Stat({ icon, value, label, context, onClick }) {
+  return (
+    <div className="card stat" onClick={onClick} style={{ cursor: onClick ? "pointer" : "default" }}>
+      <div className="stat-icon">{icon}</div>
+      <div>
+        <div className="stat-value">{value}</div>
+        <div className="stat-label">{label}</div>
+        <div className="stat-context">{context}</div>
+      </div>
+    </div>
+  );
+}
+
+function Ring({ late = false, timeStr = "02:41", label = "to curfew" }) {
+  return (
+    <div className={"ring " + (late ? "late" : "")}>
+      <div className="ring-inner">
+        <div className="ring-time">{timeStr}</div>
+        <small>{late ? "past curfew" : label}</small>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// 1. STUDENT PORTAL (STRICTLY ISOLATED)
+// ==========================================
+function StudentPortal({ currentUser, onLogout, showToast }) {
+  const [page, setPage] = useState("Home");
+  const [modal, setModal] = useState(null);
+  const [modalCb, setModalCb] = useState(null);
+
+  const openModal = (type, cb) => {
+    setModal(type);
+    setModalCb(() => cb);
+  };
+
+  const navItems = [
+    { name: "Home", icon: "⌂" },
+    { name: "My Profile", icon: "◉" },
+    { name: "Rent & Billing", icon: "₹" },
+    { name: "Complaints", icon: "!" },
+    { name: "Entry / Exit", icon: "↕" },
+    { name: "Mess Menu", icon: "🍽" },
+    { name: "Notice Board", icon: "▤" }
+  ];
+
+  return (
+    <div className="app">
+      <aside className="sidebar">
+        <div className="brand">
+          <div className="brand-mark">S</div>
+          <div>
+            <h2>SafeStay</h2>
+            <small>Smart Women Hostel</small>
+          </div>
+        </div>
+        
+        <div className="portal-tag student">
+          <span>🎓</span> Resident Portal
+        </div>
+
+        <nav className="nav">
+          {navItems.map(item => (
+            <button
+              key={item.name}
+              className={page === item.name ? "active" : ""}
+              onClick={() => setPage(item.name)}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              {item.name}
+            </button>
+          ))}
+        </nav>
+
+        <div className="sidebar-footer">
+          <div className="sidebar-user">
+            <div className="avatar">{currentUser.name ? currentUser.name[0] : "S"}</div>
+            <div className="sidebar-user-info">
+              <div className="sidebar-user-name">{currentUser.name}</div>
+              <div className="sidebar-user-sub">Room {currentUser.room}</div>
+            </div>
+          </div>
+          <button className="btn-logout" onClick={onLogout}>
+            <span>🚪</span> Sign Out
+          </button>
+        </div>
+      </aside>
+
+      <main className="main">
+        <header className="topbar">
+          <div className="page-title">{page}</div>
+          <div className="top-actions">
+            <span className="badge sage">Room {currentUser.room}</span>
+            <span className="badge plum">{currentUser.user_code}</span>
+            <button className="btn ghost" style={{ padding: "7px 12px", fontSize: 13 }} onClick={onLogout}>
+              Sign Out
+            </button>
+          </div>
+        </header>
+
+        <div className="content">
+          {page === "Home" && <StudentHome currentUser={currentUser} setPage={setPage} openModal={openModal} />}
+          {page === "My Profile" && <StudentProfile currentUser={currentUser} showToast={showToast} />}
+          {page === "Rent & Billing" && <StudentRent currentUser={currentUser} showToast={showToast} openModal={openModal} />}
+          {page === "Complaints" && <StudentComplaints currentUser={currentUser} openModal={openModal} showToast={showToast} />}
+          {page === "Entry / Exit" && <StudentExit currentUser={currentUser} openModal={openModal} showToast={showToast} />}
+          {page === "Mess Menu" && <StudentMess currentUser={currentUser} showToast={showToast} />}
+          {page === "Notice Board" && <StudentNotices currentUser={currentUser} showToast={showToast} />}
+        </div>
+      </main>
+
+      <nav className="mobile-nav">
+        {navItems.slice(0, 5).map(item => (
+          <button
+            key={item.name}
+            className={page === item.name ? "active" : ""}
+            onClick={() => setPage(item.name)}
+          >
+            <span>{item.icon}</span>
+            {item.name}
+          </button>
+        ))}
+      </nav>
+
+      {modal && (
+        <InteractiveModal
+          type={modal}
+          close={() => setModal(null)}
+          callback={modalCb}
+          currentUser={currentUser}
+          showToast={showToast}
+        />
+      )}
+    </div>
+  );
+}
+
+function StudentHome({ currentUser, setPage, openModal }) {
+  const [stats, setStats] = useState(null);
+  const [notices, setNotices] = useState([]);
+
+  useEffect(() => {
+    api(`/api/stats/student?user_code=${currentUser.user_code}`)
+      .then(setStats)
+      .catch(console.error);
+    api('/api/notices')
+      .then(res => setNotices(res.notices || []))
+      .catch(console.error);
+  }, [currentUser]);
+
+  return (
+    <>
+      <div className="greeting">
+        <div>
+          <h1>Welcome, {currentUser.name.split(" ")[0]}</h1>
+          <div className="muted">{currentUser.course} • Room {currentUser.room}</div>
+        </div>
+        <div className="quick">
+          <button className="btn primary" onClick={() => openModal("exit")}>+ Request Exit Pass</button>
+          <button className="btn ghost" onClick={() => openModal("complaint")}>! Raise Complaint</button>
+        </div>
+      </div>
+
+      <div className="card" style={{ marginBottom: 20 }}>
+        <div className="ring-wrap">
+          <Ring
+            timeStr={stats?.active_exit?.expected_return || "11:30 PM"}
+            late={stats?.active_exit && stats.active_exit.status === "Approved" && stats.active_exit.is_late}
+            label="approved curfew"
+          />
+          <div>
+            <h3 style={{ fontFamily: "Fraunces", fontSize: 24, margin: "0 0 6px" }}>Safe Return Monitor</h3>
+            <div className="muted">
+              Curfew clearance valid until <b>{stats?.active_exit?.expected_return || "11:30 PM"}</b> tonight.
+            </div>
+            <div className="success-box" style={{ marginTop: 14 }}>
+              ✓ Gate entry is automatically logged when your digital pass QR is scanned at the entrance.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid stats">
+        <Stat icon="₹" value={stats?.rent?.amount || "₹8,500"} label="Rent Status" context={`Due ${stats?.rent?.due_date || "05 Sep"}`} onClick={() => setPage("Rent & Billing")} />
+        <Stat icon="!" value={stats?.active_complaints ?? 0} label="Active Complaints" context="Under review" onClick={() => setPage("Complaints")} />
+        <Stat icon="🍽" value={stats?.mess_rating || "4.2/5"} label="Mess Rating" context="Today's menu rating" onClick={() => setPage("Mess Menu")} />
+        <Stat icon="📢" value={stats?.priority_notices ?? 1} label="Notices" context="Active hostel feed" onClick={() => setPage("Notice Board")} />
+      </div>
+
+      <div className="grid two">
+        <section className="card">
+          <div className="section-head">
+            <h3>Recent Notices</h3>
+            <button className="btn ghost" onClick={() => setPage("Notice Board")}>View All</button>
+          </div>
+          {notices.slice(0, 3).map(n => (
+            <div key={n.id} className={"row notice " + (n.priority ? "priority" : "")}>
+              <div>
+                <div className="notice-title">{n.title}</div>
+                <div className="notice-meta">{n.by_role} • {n.time_str}</div>
+              </div>
+              {n.priority ? <Badge status="Pending" /> : null}
+            </div>
+          ))}
+        </section>
+
+        <section className="card">
+          <div className="section-head">
+            <h3>Recent Activity</h3>
+          </div>
+          <div className="list">
+            {(stats?.activities && stats.activities.length > 0 ? stats.activities : [
+              { action: "Profile checked", created_at: "Just now" }
+            ]).map((x, i) => (
+              <div className="row" key={i}>
+                <div>
+                  <b>{x.action}</b>
+                  <div className="notice-meta">{x.created_at?.slice(0, 16) || "Recent"}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </>
+  );
+}
+
+function StudentProfile({ currentUser, showToast }) {
+  const [profile, setProfile] = useState(currentUser);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    api(`/api/profile?user_code=${currentUser.user_code}`)
+      .then(res => setProfile(res.user))
+      .catch(console.error);
+  }, [currentUser]);
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      const res = await api('/api/profile', {
+        method: 'PUT',
+        body: JSON.stringify({
+          user_code: profile.user_code,
+          phone: profile.phone,
+          email: profile.email,
+          emergency_name: profile.emergency_name,
+          emergency_phone: profile.emergency_phone
+        })
+      });
+      setProfile(res.user);
+      showToast("✓ Profile changes saved to database!");
+    } catch (e) {
+      showToast(e.message, "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="card">
+      <div className="section-head">
+        <h3>My Resident Profile</h3>
+        <button className="btn primary" onClick={save} disabled={saving}>
+          {saving ? "Saving..." : "Save Changes"}
+        </button>
+      </div>
+      <div className="form-grid">
+        <div className="field"><label>Full Name</label><input className="input" value={profile.name || ""} readOnly /></div>
+        <div className="field"><label>Course & Dept</label><input className="input" value={profile.course || ""} readOnly /></div>
+        <div className="field"><label>Phone Number</label><input className="input" value={profile.phone || ""} onChange={e => setProfile({ ...profile, phone: e.target.value })} /></div>
+        <div className="field"><label>Email Address</label><input className="input" value={profile.email || ""} onChange={e => setProfile({ ...profile, email: e.target.value })} /></div>
+        <div className="field"><label>Assigned Room</label><input className="input" value={(profile.room || "") + " (Locked)"} readOnly /></div>
+        <div className="field"><label>Assigned Warden</label><input className="input" value={(profile.warden_name || "Meera Sharma") + " (Locked)"} readOnly /></div>
+        <div className="field full"><h3 style={{ fontFamily: "Fraunces", margin: "10px 0 0" }}>Emergency Contact (Guardian)</h3></div>
+        <div className="field"><label>Contact Name</label><input className="input" value={profile.emergency_name || ""} onChange={e => setProfile({ ...profile, emergency_name: e.target.value })} /></div>
+        <div className="field"><label>Emergency Phone</label><input className="input" value={profile.emergency_phone || ""} onChange={e => setProfile({ ...profile, emergency_phone: e.target.value })} /></div>
+      </div>
+    </div>
+  );
+}
+
+function StudentRent({ currentUser, showToast, openModal }) {
+  const [records, setRecords] = useState([]);
+  const [paying, setPaying] = useState(false);
+
+  const loadRent = useCallback(() => {
+    api(`/api/rent?student_code=${currentUser.user_code}`)
+      .then(res => setRecords(res.records || []))
+      .catch(console.error);
+  }, [currentUser]);
+
+  useEffect(() => { loadRent(); }, [loadRent]);
+
+  const dueRecord = records.find(r => r.status !== "Paid");
+
+  const payOnline = async (recordId) => {
+    setPaying(true);
+    try {
+      const res = await api('/api/rent/pay', {
+        method: 'POST',
+        body: JSON.stringify({ record_id: recordId })
+      });
+      showToast(`✓ Payment successful! Receipt #${res.receipt_no}`);
+      loadRent();
+    } catch (e) {
+      showToast(e.message, "error");
+    } finally {
+      setPaying(false);
+    }
+  };
+
+  return (
+    <>
+      <div className="card" style={{ marginBottom: 20 }}>
+        <div className="muted">Current Monthly Dues</div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
+          <div>
+            <div className="stat-value">{dueRecord ? `₹${dueRecord.amount.toLocaleString()}` : "₹0"}</div>
+            <div className="muted">{dueRecord ? `Due by ${dueRecord.due_date}` : "All hostel fees fully settled"}</div>
+          </div>
+          <div className="quick">
+            <Badge status={dueRecord ? dueRecord.status : "Paid"} />
+            {dueRecord && (
+              <button className="btn primary" onClick={() => payOnline(dueRecord.id)} disabled={paying}>
+                {paying ? "Processing..." : "Pay via UPI / Card"}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="section-head">
+          <h3>Payment & Receipt History</h3>
+          <button className="btn ghost" onClick={() => showToast("Finance warden notified of receipt request.")}>Inquire with Warden</button>
+        </div>
+        <div className="table-wrap">
+          <table className="table">
+            <thead><tr><th>Month</th><th>Amount</th><th>Paid Date</th><th>Status</th><th>Receipt</th></tr></thead>
+            <tbody>
+              {records.map(r => (
+                <tr key={r.id}>
+                  <td><b>{r.month}</b></td>
+                  <td>₹{r.amount.toLocaleString()}</td>
+                  <td>{r.paid_on || "—"}</td>
+                  <td><Badge status={r.status} /></td>
+                  <td>
+                    {r.status === "Paid" ? (
+                      <button className="btn ghost" style={{ padding: "6px 12px", fontSize: 12 }} onClick={() => showToast(`Receipt #${r.receipt_no || "REC-8201"} generated & downloaded.`)}>
+                        Receipt #{r.receipt_no || "REC-8201"}
+                      </button>
+                    ) : (
+                      <button className="btn success" style={{ padding: "6px 12px", fontSize: 12 }} onClick={() => payOnline(r.id)}>
+                        Pay
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function StudentComplaints({ currentUser, openModal, showToast }) {
+  const [complaints, setComplaints] = useState([]);
+  const [tab, setTab] = useState("All");
+
+  const loadComplaints = useCallback(() => {
+    let url = `/api/complaints?student_code=${currentUser.user_code}`;
+    if (tab !== "All") url += `&status=${tab}`;
+    api(url).then(res => setComplaints(res.complaints || [])).catch(console.error);
+  }, [currentUser, tab]);
+
+  useEffect(() => { loadComplaints(); }, [loadComplaints]);
+
+  return (
+    <div className="card">
+      <div className="toolbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <div className="tabs" style={{ margin: 0 }}>
+          {["All", "Pending", "In Progress", "Solved"].map(t => (
+            <button key={t} className={"tab " + (tab === t ? "active" : "")} onClick={() => setTab(t)}>{t}</button>
+          ))}
+        </div>
+        <button className="btn primary" onClick={() => openModal("complaint", loadComplaints)}>+ Raise New Complaint</button>
+      </div>
+
+      <div className="list">
+        {complaints.length === 0 ? (
+          <div className="empty" style={{ textAlign: "center", padding: "40px" }}>
+            <strong>No complaints found</strong>
+            <div className="muted">All hostel facilities in Room {currentUser.room} are operating smoothly!</div>
+          </div>
+        ) : (
+          complaints.map(c => (
+            <div className="row" key={c.id}>
+              <div>
+                <div className="notice-title">{c.title}</div>
+                <div className="notice-meta">{c.complaint_code} • {c.category} • {c.date_str}</div>
+                {c.description && <div style={{ fontSize: 13, color: "var(--muted)", marginTop: 4 }}>{c.description}</div>}
+              </div>
+              <Badge status={c.status} />
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
+function StudentExit({ currentUser, openModal, showToast }) {
+  const [requests, setRequests] = useState([]);
+
+  const loadRequests = useCallback(() => {
+    api(`/api/exit-requests?student_code=${currentUser.user_code}`)
+      .then(res => setRequests(res.requests || []))
+      .catch(console.error);
+  }, [currentUser]);
+
+  useEffect(() => { loadRequests(); }, [loadRequests]);
+
+  const active = requests.find(r => r.status === "Approved");
+  const latestPending = requests.find(r => r.status === "Pending");
+
+  return (
+    <>
+      <div className="grid two">
+        <div className="card">
+          <div className="ring-wrap">
+            <Ring timeStr={active ? active.expected_return : latestPending ? latestPending.expected_return : "09:30 PM"} />
+            <div>
+              <h3 style={{ fontFamily: "Fraunces" }}>
+                {active ? "Approved Gate Clearance" : latestPending ? "Leave Request Pending" : "No Active Gate Pass"}
+              </h3>
+              <p className="muted">
+                {active ? (
+                  <>Return by: <b>{active.expected_return}</b></>
+                ) : latestPending ? (
+                  <>Awaiting Warden approval for <b>{latestPending.expected_return}</b></>
+                ) : (
+                  <>Standard Curfew: <b>09:30 PM</b></>
+                )}
+              </p>
+              <button className="btn primary" style={{ marginTop: 12 }} onClick={() => openModal("exit", loadRequests)}>
+                + New Exit Pass Request
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="gate-pass-card">
+          <Badge status={active ? "Approved" : latestPending ? "Pending" : "In"} />
+          <div className="qr-box"></div>
+          <b style={{ display: "block", fontSize: 16 }}>Hostel Gate Digital Pass</b>
+          <div className="notice-meta" style={{ marginTop: 4 }}>
+            {active ? (
+              <>Pass Code: {active.request_code} • Resident: {currentUser.name} (Room {currentUser.room})</>
+            ) : latestPending ? (
+              <>Pass Code: {latestPending.request_code} (Under Warden Review) • Room {currentUser.room}</>
+            ) : (
+              <>Apply for an outing pass to generate an optical QR code • Room {currentUser.room}</>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="card" style={{ marginTop: 20 }}>
+        <div className="section-head"><h3>Pass Request History</h3></div>
+        <div className="table-wrap">
+          <table className="table">
+            <thead><tr><th>Date</th><th>Pass Code</th><th>Out Time</th><th>Return Time</th><th>Reason</th><th>Status</th></tr></thead>
+            <tbody>
+              {requests.map(r => (
+                <tr key={r.id}>
+                  <td>{r.date_str}</td>
+                  <td><b>{r.request_code}</b></td>
+                  <td>{r.actual_exit || r.time_out}</td>
+                  <td>{r.actual_entry || r.expected_return}</td>
+                  <td>{r.reason}</td>
+                  <td><Badge status={r.status} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function StudentMess({ currentUser, showToast }) {
+  const [activeDay, setActiveDay] = useState("Thursday");
+  const [menu, setMenu] = useState({});
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  useEffect(() => {
+    api('/api/mess/menu').then(res => setMenu(res.menu || {})).catch(console.error);
+  }, []);
+
+  const rate = async (meal, rating) => {
+    try {
+      await api('/api/mess/feedback', {
+        method: 'POST',
+        body: JSON.stringify({
+          student_code: currentUser.user_code,
+          day_of_week: activeDay,
+          meal_type: meal,
+          rating
+        })
+      });
+      showToast(`✓ Submitted ${rating}★ rating for ${activeDay} ${meal}!`);
+    } catch (e) {
+      showToast(e.message, "error");
+    }
+  };
+
+  const dayMenu = menu[activeDay] || {
+    Breakfast: "Poha, boiled eggs / sprouts, tea",
+    Lunch: "Dal Makhani, rice, roti, fresh salad",
+    Snacks: "Tea, biscuits, fruit",
+    Dinner: "Paneer butter masala, jeera rice, roti"
+  };
+
+  return (
+    <div className="card">
+      <div className="tabs">
+        {days.map(d => (
+          <button key={d} className={"tab " + (activeDay === d ? "active" : "")} onClick={() => setActiveDay(d)}>{d}</button>
+        ))}
+      </div>
+      <div className="grid two">
+        {["Breakfast", "Lunch", "Snacks", "Dinner"].map((meal, idx) => (
+          <div className="card" key={meal} style={{ background: "#fcfaf7", border: "1px solid #eee8df" }}>
+            <div className="section-head">
+              <h3>{meal}</h3>
+              <Badge status={idx < 2 ? "Solved" : "Pending"} />
+            </div>
+            <p style={{ minHeight: 40, color: "var(--plum)" }}>{dayMenu[meal] || "Freshly prepared wholesome hostel meal"}</p>
+            <div className="quick" style={{ marginTop: 12 }}>
+              <span style={{ fontWeight: 700, fontSize: 13 }}>Rate Meal:</span>
+              {[1, 2, 3, 4, 5].map(n => (
+                <button key={n} className="btn ghost" style={{ padding: "6px 10px", fontSize: 12 }} onClick={() => rate(meal, n)}>
+                  ★ {n}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StudentNotices({ currentUser, showToast }) {
+  const [notices, setNotices] = useState([]);
+
+  const loadNotices = useCallback(() => {
+    api('/api/notices').then(res => setNotices(res.notices || [])).catch(console.error);
+  }, []);
+
+  useEffect(() => { loadNotices(); }, [loadNotices]);
+
+  const ack = async (id) => {
+    try {
+      await api(`/api/notices/${id}/acknowledge`, {
+        method: 'POST',
+        body: JSON.stringify({ user_code: currentUser.user_code })
+      });
+      showToast("✓ Notice acknowledged.");
+      loadNotices();
+    } catch (e) {
+      showToast(e.message, "error");
+    }
+  };
+
+  return (
+    <div className="card">
+      <div className="section-head">
+        <h3>Hostel Notice Board</h3>
+        <span className="muted">Broadcast feed from Warden & Administration</span>
+      </div>
+      <div className="list">
+        {notices.map(n => {
+          let acks = [];
+          try {
+            acks = Array.isArray(n.acknowledged_by) ? n.acknowledged_by : JSON.parse(n.acknowledged_by || "[]");
+          } catch(e) { acks = []; }
+          const isAcked = acks.includes(currentUser.user_code);
+
+          return (
+            <div className={"card notice " + (n.priority ? "priority" : "")} key={n.id} style={{ boxShadow: "none" }}>
+              <div className="section-head">
+                <div>
+                  <h3 style={{ fontFamily: "Fraunces", fontSize: 17 }}>{n.title}</h3>
+                  <div className="notice-meta">{n.by_role} • {n.time_str}</div>
+                </div>
+                {n.priority ? <Badge status={isAcked ? "Solved" : "Pending"} /> : null}
+              </div>
+              <p className="muted" style={{ fontSize: 14 }}>{n.body}</p>
+              {n.priority && (
+                <button
+                  className={"btn " + (isAcked ? "ghost" : "primary")}
+                  style={{ marginTop: 10, padding: "7px 14px" }}
+                  onClick={() => !isAcked && ack(n.id)}
+                  disabled={isAcked}
+                >
+                  {isAcked ? "✓ Notice Acknowledged" : "Acknowledge Notice"}
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// 2. WARDEN PORTAL (STRICTLY ISOLATED)
+// ==========================================
+function WardenPortal({ currentUser, onLogout, showToast }) {
+  const [page, setPage] = useState("Dashboard");
+  const [modal, setModal] = useState(null);
+  const [modalCb, setModalCb] = useState(null);
+
+  const openModal = (type, cb) => {
+    setModal(type);
+    setModalCb(() => cb);
+  };
+
+  const navItems = [
+    { name: "Dashboard", icon: "⌂" },
+    { name: "Attendance", icon: "✓" },
+    { name: "Entry / Exit Approvals", icon: "↕" },
+    { name: "Complaint Management", icon: "!" },
+    { name: "Notice Board", icon: "▤" },
+    { name: "Mess Feedback", icon: "★" },
+    { name: "Student Directory", icon: "⌕" }
+  ];
+
+  return (
+    <div className="app">
+      <aside className="sidebar">
+        <div className="brand">
+          <div className="brand-mark">S</div>
+          <div>
+            <h2>SafeStay</h2>
+            <small>Warden Desk</small>
+          </div>
+        </div>
+
+        <div className="portal-tag warden">
+          <span>🛡️</span> Floor Warden Portal
+        </div>
+
+        <nav className="nav">
+          {navItems.map(item => (
+            <button
+              key={item.name}
+              className={page === item.name ? "active" : ""}
+              onClick={() => setPage(item.name)}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              {item.name}
+            </button>
+          ))}
+        </nav>
+
+        <div className="sidebar-footer">
+          <div className="sidebar-user">
+            <div className="avatar" style={{ background: "#2a8357", color: "#fff" }}>W</div>
+            <div className="sidebar-user-info">
+              <div className="sidebar-user-name">{currentUser.name}</div>
+              <div className="sidebar-user-sub">Block A Warden</div>
+            </div>
+          </div>
+          <button className="btn-logout" onClick={onLogout}>
+            <span>🚪</span> Sign Out
+          </button>
+        </div>
+      </aside>
+
+      <main className="main">
+        <header className="topbar">
+          <div className="page-title">{page}</div>
+          <div className="top-actions">
+            <span className="badge sage">Block A Warden</span>
+            <button className="btn ghost" style={{ padding: "7px 12px", fontSize: 13 }} onClick={onLogout}>
+              Sign Out
+            </button>
+          </div>
+        </header>
+
+        <div className="content">
+          {page === "Dashboard" && <WardenDashboard openModal={openModal} showToast={showToast} />}
+          {page === "Attendance" && <WardenAttendance showToast={showToast} />}
+          {page === "Entry / Exit Approvals" && <WardenApprovals openModal={openModal} showToast={showToast} />}
+          {page === "Complaint Management" && <WardenComplaints showToast={showToast} />}
+          {page === "Notice Board" && <WardenNotices showToast={showToast} />}
+          {page === "Mess Feedback" && <WardenMessFeedback showToast={showToast} />}
+          {page === "Student Directory" && <WardenDirectory />}
+        </div>
+      </main>
+
+      <nav className="mobile-nav">
+        {navItems.slice(0, 5).map(item => (
+          <button
+            key={item.name}
+            className={page === item.name ? "active" : ""}
+            onClick={() => setPage(item.name)}
+          >
+            <span>{item.icon}</span>
+            {item.name}
+          </button>
+        ))}
+      </nav>
+
+      {modal && (
+        <InteractiveModal
+          type={modal}
+          close={() => setModal(null)}
+          callback={modalCb}
+          currentUser={currentUser}
+          showToast={showToast}
+        />
+      )}
+    </div>
+  );
+}
+
+function WardenDashboard({ openModal, showToast }) {
+  const [stats, setStats] = useState(null);
+
+  const loadStats = useCallback(() => {
+    api('/api/stats/warden').then(setStats).catch(console.error);
+  }, []);
+
+  useEffect(() => { loadStats(); }, [loadStats]);
+
+  const quickScanIn = async (code) => {
+    try {
+      const res = await api('/api/gate/scan', {
+        method: 'POST',
+        body: JSON.stringify({ code })
+      });
+      showToast(res.message);
+      loadStats();
+    } catch (e) {
+      showToast(e.message, "error");
+    }
+  };
+
+  return (
+    <>
+      <div className="greeting">
+        <div>
+          <h1>Warden Operations Snapshot</h1>
+          <div className="muted">Live resident curfew status & safety queue</div>
+        </div>
+        <div className="quick">
+          <button className="btn primary" onClick={() => openModal("scan", loadStats)}>📷 Open Gate Scanner</button>
+          <button className="btn ghost" onClick={() => openModal("notice", loadStats)}>+ Post Announcement</button>
+        </div>
+      </div>
+
+      <div className="grid three">
+        <Stat icon="↕" value={stats?.pending_exits ?? 0} label="Pending Leaves" context="Awaiting clearance" />
+        <Stat icon="!" value={stats?.unattended_complaints ?? 0} label="Open Complaints" context="Needs assignment" />
+        <Stat icon="✓" value={stats?.attendance_pending ?? 0} label="Attendance Unmarked" context="Today's count" />
+        <Stat icon="⌂" value={stats?.currently_out_count ?? 0} label="Currently Out" context="Outside hostel premises" />
+        <Stat icon="🍽" value={stats?.mess_rating || "4.2/5"} label="Mess Rating" context="This week's avg" />
+        <Stat icon="⚠️" value={stats?.past_curfew ?? 0} label="Past Curfew" context="Urgent action required" />
+      </div>
+
+      <div className="grid two">
+        <div className="card">
+          <div className="section-head">
+            <h3>Residents Currently Out</h3>
+            <button className="btn ghost" onClick={() => openModal("scan", loadStats)}>Gate Log</button>
+          </div>
+          {(stats?.currently_out && stats.currently_out.length > 0 ? stats.currently_out : []).map(s => (
+            <div className="row" key={s.user_code}>
+              <div>
+                <b>{s.name}</b>
+                <div className="notice-meta">{s.room} • Curfew: {s.expected_return}</div>
+              </div>
+              <div className="quick">
+                <Ring late={s.late} timeStr={s.time_str} />
+                <button className="btn success" style={{ padding: "6px 10px", fontSize: 12 }} onClick={() => quickScanIn(s.user_code)}>
+                  Check In
+                </button>
+              </div>
+            </div>
+          ))}
+          {(!stats?.currently_out || stats.currently_out.length === 0) && (
+            <div className="empty" style={{ padding: 24 }}>All residents safely inside hostel premises.</div>
+          )}
+        </div>
+
+        <div className="card">
+          <div className="section-head">
+            <h3>Gate & Safety Activity</h3>
+          </div>
+          <div className="list">
+            {(stats?.activities && stats.activities.length > 0 ? stats.activities : []).map((x, i) => (
+              <div className="row" key={i}>
+                <div>
+                  <b>{x.action}</b>
+                  <div className="notice-meta">{x.created_at?.slice(0, 16)}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function WardenAttendance({ showToast }) {
+  const [students, setStudents] = useState([]);
+  const [floor, setFloor] = useState("All floors");
+  const [search, setSearch] = useState("");
+
+  const load = useCallback(() => {
+    api('/api/attendance').then(res => setStudents(res.records || [])).catch(console.error);
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const toggle = (code, status) => {
+    setStudents(prev => prev.map(s => s.student_code === code ? { ...s, status } : s));
+  };
+
+  const markAll = (status) => {
+    setStudents(prev => prev.map(s => ({ ...s, status })));
+  };
+
+  const submit = async () => {
+    try {
+      await api('/api/attendance', {
+        method: 'POST',
+        body: JSON.stringify({
+          records: students.map(s => ({ student_code: s.student_code, status: s.status }))
+        })
+      });
+      showToast("✓ Daily attendance recorded in database!");
+    } catch (e) {
+      showToast(e.message, "error");
+    }
+  };
+
+  const filtered = students.filter(s => {
+    const matchSearch = s.name.toLowerCase().includes(search.toLowerCase()) || s.room.toLowerCase().includes(search.toLowerCase());
+    const matchFloor = floor === "All floors" || (floor === "Floor 1" && s.room.startsWith("A-1")) || (floor === "Floor 2" && s.room.startsWith("A-2"));
+    return matchSearch && matchFloor;
+  });
+
+  return (
+    <div className="card">
+      <div className="toolbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <div>
+          <h3 style={{ fontFamily: "Fraunces", margin: "0 0 4px" }}>Daily Roll-Call Register</h3>
+          <div className="muted">{new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} • {filtered.length} Residents</div>
+        </div>
+        <div className="filters">
+          <input className="input" placeholder="Search resident or room" value={search} onChange={e => setSearch(e.target.value)} />
+          <select className="select" value={floor} onChange={e => setFloor(e.target.value)}>
+            <option>All floors</option>
+            <option>Floor 1</option>
+            <option>Floor 2</option>
+          </select>
+          <button className="btn ghost" onClick={() => markAll("Present")}>All Present</button>
+        </div>
+      </div>
+
+      <div className="table-wrap">
+        <table className="table">
+          <thead><tr><th>Student Name</th><th>Room</th><th>Course</th><th>Roll-Call Status</th></tr></thead>
+          <tbody>
+            {filtered.map(s => (
+              <tr key={s.student_code}>
+                <td><b>{s.name}</b></td>
+                <td>{s.room}</td>
+                <td>{s.course}</td>
+                <td>
+                  <button className={"btn " + (s.status === "Present" ? "success" : "ghost")} style={{ padding: "6px 12px", marginRight: 8 }} onClick={() => toggle(s.student_code, "Present")}>
+                    ✓ Present
+                  </button>
+                  <button className={"btn " + (s.status === "Absent" ? "danger" : "ghost")} style={{ padding: "6px 12px" }} onClick={() => toggle(s.student_code, "Absent")}>
+                    Absent
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20 }}>
+        <button className="btn primary" onClick={submit}>Submit & Lock Attendance</button>
+      </div>
+    </div>
+  );
+}
+
+function WardenApprovals({ openModal, showToast }) {
+  const [requests, setRequests] = useState([]);
+
+  const load = useCallback(() => {
+    api('/api/exit-requests?status=Pending').then(res => setRequests(res.requests || [])).catch(console.error);
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const act = async (id, action) => {
+    try {
+      await api(`/api/exit-requests/${id}/action`, {
+        method: 'PUT',
+        body: JSON.stringify({ action })
+      });
+      showToast(`✓ Leave pass ${action}d!`);
+      load();
+    } catch (e) {
+      showToast(e.message, "error");
+    }
+  };
+
+  return (
+    <div className="grid two">
+      <div className="card">
+        <div className="section-head">
+          <h3>Pending Leave Passes</h3>
+          <Badge status="Pending" />
+        </div>
+        {requests.length === 0 ? (
+          <div className="empty" style={{ padding: 40, textAlign: "center" }}>
+            <strong>All leave requests resolved</strong>
+            <div className="muted">No pending gate passes waiting for approval.</div>
+          </div>
+        ) : (
+          requests.map(r => (
+            <div className="row" key={r.id}>
+              <div>
+                <b>{r.student_name}</b>
+                <div className="notice-meta">{r.request_code} • Room {r.room}</div>
+                <div style={{ fontSize: 13, marginTop: 4 }}>
+                  {r.date_str} • {r.time_out} → {r.expected_return} • <i>{r.reason}</i>
+                </div>
+              </div>
+              <div className="quick">
+                <button className="btn success" style={{ padding: "7px 12px" }} onClick={() => act(r.id, "approve")}>Approve</button>
+                <button className="btn danger" style={{ padding: "7px 12px" }} onClick={() => act(r.id, "reject")}>Reject</button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <div className="card">
+        <div className="section-head">
+          <h3>Gate Simulator</h3>
+          <button className="btn primary" onClick={() => openModal("scan")}>Open Scanner</button>
+        </div>
+        <div className="qr-box"></div>
+        <div className="muted" style={{ textAlign: "center", marginBottom: 12 }}>
+          Scan student digital QR code or enter student ID manually to log entry/exit.
+        </div>
+        <div className="alert">
+          Curfew enforcement: Students returning past curfew will be auto-flagged in red.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WardenComplaints({ showToast }) {
+  const [complaints, setComplaints] = useState([]);
+  const [status, setStatus] = useState("All statuses");
+  const [category, setCategory] = useState("All categories");
+  const [search, setSearch] = useState("");
+
+  const load = useCallback(() => {
+    let url = `/api/complaints?search=${encodeURIComponent(search)}`;
+    if (status !== "All statuses") url += `&status=${encodeURIComponent(status)}`;
+    if (category !== "All categories") url += `&category=${encodeURIComponent(category)}`;
+    api(url).then(res => setComplaints(res.complaints || [])).catch(console.error);
+  }, [status, category, search]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const update = async (id, newStatus) => {
+    try {
+      await api(`/api/complaints/${id}/status`, {
+        method: 'PUT',
+        body: JSON.stringify({ status: newStatus })
+      });
+      showToast(`✓ Complaint moved to ${newStatus}`);
+      load();
+    } catch (e) {
+      showToast(e.message, "error");
+    }
+  };
+
+  return (
+    <div className="card">
+      <div className="toolbar" style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20 }}>
+        <input className="input" placeholder="Search complaints or room" value={search} onChange={e => setSearch(e.target.value)} />
+        <select className="select" value={status} onChange={e => setStatus(e.target.value)}>
+          <option>All statuses</option>
+          <option>Pending</option>
+          <option>In Progress</option>
+          <option>Solved</option>
+        </select>
+        <select className="select" value={category} onChange={e => setCategory(e.target.value)}>
+          <option>All categories</option>
+          <option>Maintenance</option>
+          <option>Mess</option>
+          <option>Internet</option>
+          <option>Safety</option>
+        </select>
+      </div>
+
+      <div className="table-wrap">
+        <table className="table">
+          <thead><tr><th>Code</th><th>Grievance</th><th>Resident</th><th>Category</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody>
+            {complaints.map(c => (
+              <tr key={c.id}>
+                <td><b>{c.complaint_code}</b></td>
+                <td>
+                  <b>{c.title}</b>
+                  {c.description && <div className="notice-meta">{c.description}</div>}
+                </td>
+                <td>{c.student_name} (Room {c.room})</td>
+                <td>{c.category}</td>
+                <td><Badge status={c.status} /></td>
+                <td>{c.date_str}</td>
+                <td>
+                  <div className="quick">
+                    {c.status !== "Solved" && (
+                      <button className="btn success" style={{ padding: "5px 9px", fontSize: 12 }} onClick={() => update(c.id, "Solved")}>
+                        Mark Solved
+                      </button>
+                    )}
+                    {c.status === "Pending" && (
+                      <button className="btn ghost" style={{ padding: "5px 9px", fontSize: 12 }} onClick={() => update(c.id, "In Progress")}>
+                        In Progress
+                      </button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function WardenNotices({ showToast }) {
+  const [notices, setNotices] = useState([]);
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [priority, setPriority] = useState("Normal");
+  const [expiry, setExpiry] = useState("");
+
+  const load = useCallback(() => {
+    api('/api/notices').then(res => setNotices(res.notices || [])).catch(console.error);
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const publish = async () => {
+    if (!title || !body) return showToast("Title and message body are required", "error");
+    try {
+      await api('/api/notices', {
+        method: 'POST',
+        body: JSON.stringify({
+          title, body,
+          priority: priority === "Priority",
+          expiry_date: expiry,
+          by_role: "Warden"
+        })
+      });
+      showToast("✓ Notice published to all residents!");
+      setTitle(""); setBody("");
+      load();
+    } catch (e) {
+      showToast(e.message, "error");
+    }
+  };
+
+  const remove = async (id) => {
+    try {
+      await api(`/api/notices/${id}`, { method: 'DELETE' });
+      showToast("Notice deleted");
+      load();
+    } catch (e) {
+      showToast(e.message, "error");
+    }
+  };
+
+  return (
+    <div className="grid two">
+      <div className="card">
+        <div className="section-head"><h3>Broadcast New Notice</h3></div>
+        <div className="form-grid">
+          <div className="field full"><label>Notice Headline</label><input className="input" placeholder="e.g. Tank Maintenance" value={title} onChange={e => setTitle(e.target.value)} /></div>
+          <div className="field full"><label>Message Content</label><textarea className="textarea" placeholder="Detailed instruction..." value={body} onChange={e => setBody(e.target.value)}></textarea></div>
+          <div className="field"><label>Priority Tag</label><select className="select" value={priority} onChange={e => setPriority(e.target.value)}><option>Normal</option><option>Priority</option></select></div>
+          <div className="field"><label>Auto-Expiry Date</label><input className="input" type="date" value={expiry} onChange={e => setExpiry(e.target.value)} /></div>
+        </div>
+        <div className="modal-actions"><button className="btn primary" onClick={publish}>Publish Notice</button></div>
+      </div>
+
+      <div className="card">
+        <div className="section-head"><h3>Active Broadcasts</h3></div>
+        <div className="list">
+          {notices.map(n => (
+            <div className="row" key={n.id}>
+              <div>
+                <b>{n.title}</b>
+                <div className="notice-meta">{n.time_str} • Author: {n.by_role}</div>
+              </div>
+              <button className="btn danger" style={{ padding: "6px 10px", fontSize: 12 }} onClick={() => remove(n.id)}>Delete</button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WardenMessFeedback({ showToast }) {
+  const [data, setData] = useState({ averages: [4.5, 4.1, 3.8, 4.2, 3.4, 4.0, 4.3], comments: [] });
+
+  const load = useCallback(() => {
+    api('/api/mess/feedback').then(setData).catch(console.error);
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const address = async (id) => {
+    try {
+      await api(`/api/mess/feedback/${id}/address`, { method: 'PUT' });
+      showToast("Comment marked addressed");
+      load();
+    } catch (e) {
+      showToast(e.message, "error");
+    }
+  };
+
+  return (
+    <div className="grid two">
+      <div className="card">
+        <div className="section-head">
+          <h3>Daily Resident Satisfaction</h3>
+          <span className="muted">This week</span>
+        </div>
+        <div className="chart">
+          {data.averages.map((v, i) => (
+            <div className="bar-col" key={i}>
+              <div className="bar-value">{v}</div>
+              <div className="bar" style={{ height: (v / 5 * 80) + "%" }}></div>
+              <div className="bar-label">{["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][i]}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="section-head"><h3>Resident Meal Feedback</h3></div>
+        <div className="list">
+          {(data.comments && data.comments.length > 0 ? data.comments : []).map(x => (
+            <div className="row" key={x.id}>
+              <div>
+                <b>{x.comment}</b>
+                <div className="notice-meta">{x.day_of_week} • {x.meal_type}</div>
+              </div>
+              <button className="btn ghost" style={{ padding: "6px 10px", fontSize: 12 }} onClick={() => address(x.id)}>
+                Address
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WardenDirectory() {
+  const [students, setStudents] = useState([]);
+  const [search, setSearch] = useState("");
+  const [floor, setFloor] = useState("All floors");
+
+  useEffect(() => {
+    api(`/api/students?search=${encodeURIComponent(search)}&floor=${encodeURIComponent(floor)}`)
+      .then(res => setStudents(res.students || []))
+      .catch(console.error);
+  }, [search, floor]);
+
+  return (
+    <div className="card">
+      <div className="toolbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <h3 style={{ fontFamily: "Fraunces", margin: 0 }}>Block A Resident Directory</h3>
+        <div className="filters">
+          <input className="input" placeholder="Search name, room or course" value={search} onChange={e => setSearch(e.target.value)} />
+          <select className="select" value={floor} onChange={e => setFloor(e.target.value)}>
+            <option>All floors</option>
+            <option>Floor 1</option>
+            <option>Floor 2</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="table-wrap">
+        <table className="table">
+          <thead><tr><th>Name</th><th>Room</th><th>Course</th><th>Contact Phone</th><th>Fee Status</th><th>Gate Status</th></tr></thead>
+          <tbody>
+            {students.map(s => (
+              <tr key={s.id}>
+                <td><b>{s.name}</b></td>
+                <td>{s.room}</td>
+                <td>{s.course}</td>
+                <td>{s.phone}</td>
+                <td><Badge status={s.rent_status || "Paid"} /></td>
+                <td><Badge status={s.curfew_status || "In"} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// 3. ADMIN PORTAL (STRICTLY ISOLATED)
+// ==========================================
+function AdminPortal({ currentUser, onLogout, showToast }) {
+  const [page, setPage] = useState("Dashboard");
+  const [modal, setModal] = useState(null);
+  const [modalCb, setModalCb] = useState(null);
+
+  const openModal = (type, cb) => {
+    setModal(type);
+    setModalCb(() => cb);
+  };
+
+  const navItems = [
+    { name: "Dashboard", icon: "⌂" },
+    { name: "Student Management", icon: "♙" },
+    { name: "Rent & Billing", icon: "₹" },
+    { name: "Complaint Oversight", icon: "!" },
+    { name: "Warden / Staff", icon: "👥" },
+    { name: "Notice Board", icon: "▤" },
+    { name: "Reports & Exports", icon: "⇩" },
+    { name: "Settings", icon: "⚙" }
+  ];
+
+  return (
+    <div className="app">
+      <aside className="sidebar">
+        <div className="brand">
+          <div className="brand-mark">S</div>
+          <div>
+            <h2>SafeStay</h2>
+            <small>Hostel Administration</small>
+          </div>
+        </div>
+
+        <div className="portal-tag admin">
+          <span>⚙️</span> Operations Admin
+        </div>
+
+        <nav className="nav">
+          {navItems.map(item => (
+            <button
+              key={item.name}
+              className={page === item.name ? "active" : ""}
+              onClick={() => setPage(item.name)}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              {item.name}
+            </button>
+          ))}
+        </nav>
+
+        <div className="sidebar-footer">
+          <div className="sidebar-user">
+            <div className="avatar" style={{ background: "#c24131", color: "#fff" }}>A</div>
+            <div className="sidebar-user-info">
+              <div className="sidebar-user-name">Hostel Admin</div>
+              <div className="sidebar-user-sub">Operations Head</div>
+            </div>
+          </div>
+          <button className="btn-logout" onClick={onLogout}>
+            <span>🚪</span> Sign Out
+          </button>
+        </div>
+      </aside>
+
+      <main className="main">
+        <header className="topbar">
+          <div className="page-title">{page}</div>
+          <div className="top-actions">
+            <span className="badge brick">Central Administration</span>
+            <button className="btn ghost" style={{ padding: "7px 12px", fontSize: 13 }} onClick={onLogout}>
+              Sign Out
+            </button>
+          </div>
+        </header>
+
+        <div className="content">
+          {page === "Dashboard" && <AdminDashboard openModal={openModal} />}
+          {page === "Student Management" && <AdminStudents openModal={openModal} showToast={showToast} />}
+          {page === "Rent & Billing" && <AdminRent openModal={openModal} showToast={showToast} />}
+          {page === "Complaint Oversight" && <WardenComplaints showToast={showToast} />}
+          {page === "Warden / Staff" && <AdminStaff openModal={openModal} showToast={showToast} />}
+          {page === "Notice Board" && <WardenNotices showToast={showToast} />}
+          {page === "Reports & Exports" && <AdminReports showToast={showToast} />}
+          {page === "Settings" && <AdminSettings showToast={showToast} />}
+        </div>
+      </main>
+
+      <nav className="mobile-nav">
+        {navItems.slice(0, 5).map(item => (
+          <button
+            key={item.name}
+            className={page === item.name ? "active" : ""}
+            onClick={() => setPage(item.name)}
+          >
+            <span>{item.icon}</span>
+            {item.name}
+          </button>
+        ))}
+      </nav>
+
+      {modal && (
+        <InteractiveModal
+          type={modal}
+          close={() => setModal(null)}
+          callback={modalCb}
+          currentUser={currentUser}
+          showToast={showToast}
+        />
+      )}
+    </div>
+  );
+}
+
+function AdminDashboard({ openModal }) {
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    api('/api/stats/admin').then(setStats).catch(console.error);
+  }, []);
+
+  return (
+    <>
+      <div className="greeting">
+        <div>
+          <h1>Operations & Capacity Dashboard</h1>
+          <div className="muted">Live hostel occupancy, revenue, and infrastructure status</div>
+        </div>
+        <button className="btn primary" onClick={() => openModal("export")}>Download Snapshot</button>
+      </div>
+
+      <div className="grid stats">
+        <Stat icon="⌂" value={stats?.occupancy?.percent || "92%"} label="Bed Occupancy" context={stats?.occupancy?.text || "184 / 200 beds"} />
+        <Stat icon="₹" value={stats?.rent?.collected || "₹14.8L"} label="Total Revenue" context={`${stats?.rent?.due || "₹1.04L"} pending dues`} />
+        <Stat icon="!" value={stats?.complaints?.open ?? 17} label="Active Complaints" context={`${stats?.complaints?.escalated ?? 4} escalated`} />
+        <Stat icon="↕" value={stats?.past_curfew ?? 3} label="Residents Out" context="Current gate movement" />
+      </div>
+
+      <div className="grid two">
+        <div className="card">
+          <div className="section-head">
+            <h3>Occupancy Trend (Last 7 Days)</h3>
+          </div>
+          <div className="chart">
+            {(stats?.occupancy?.trend || [86, 87, 89, 90, 91, 92, 92]).map((v, i) => (
+              <div className="bar-col" key={i}>
+                <div className="bar-value">{v}%</div>
+                <div className="bar" style={{ height: (v / 100 * 80) + "%" }}></div>
+                <div className="bar-label">{["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][i]}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="section-head">
+            <h3>Rent Dues Aging</h3>
+          </div>
+          <div className="chart">
+            {(stats?.rent?.aging || [42, 30, 18, 10]).map((v, i) => (
+              <div className="bar-col" key={i}>
+                <div className="bar-value">{v}%</div>
+                <div className="bar" style={{ height: (v / 50 * 80) + "%" }}></div>
+                <div className="bar-label">{["Current", "1–7d", "8–30d", "30d+"][i]}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function AdminStudents({ openModal, showToast }) {
+  const [students, setStudents] = useState([]);
+
+  const load = useCallback(() => {
+    api('/api/students').then(res => setStudents(res.students || [])).catch(console.error);
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const toggle = async (s) => {
+    const newStatus = s.status === "Active" ? "Inactive" : "Active";
+    try {
+      await api(`/api/students/${s.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ status: newStatus })
+      });
+      showToast(`Student ${s.name} set to ${newStatus}`);
+      load();
+    } catch (e) {
+      showToast(e.message, "error");
+    }
+  };
+
+  return (
+    <div className="card">
+      <div className="toolbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <h3 style={{ fontFamily: "Fraunces", margin: 0 }}>Enrolled Residents Management</h3>
+        <button className="btn primary" onClick={() => openModal("add-student", load)}>+ Add New Student</button>
+      </div>
+
+      <div className="table-wrap">
+        <table className="table">
+          <thead><tr><th>Student ID</th><th>Name</th><th>Room</th><th>Course</th><th>Status</th><th>Rent Status</th><th>Action</th></tr></thead>
+          <tbody>
+            {students.map(s => (
+              <tr key={s.id}>
+                <td><b>{s.user_code}</b></td>
+                <td><b>{s.name}</b><div className="notice-meta">{s.phone}</div></td>
+                <td>{s.room}</td>
+                <td>{s.course}</td>
+                <td><Badge status={s.status} /></td>
+                <td><Badge status={s.rent_status || "Paid"} /></td>
+                <td>
+                  <button className="btn ghost" style={{ padding: "6px 12px", fontSize: 12 }} onClick={() => toggle(s)}>
+                    {s.status === "Active" ? "Deactivate" : "Activate"}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function AdminRent({ openModal, showToast }) {
+  const [records, setRecords] = useState([]);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("All statuses");
+
+  const load = useCallback(() => {
+    let url = `/api/rent?search=${encodeURIComponent(search)}`;
+    if (status !== "All statuses") url += `&status=${encodeURIComponent(status)}`;
+    api(url).then(res => setRecords(res.records || [])).catch(console.error);
+  }, [search, status]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const markPaid = async (id) => {
+    try {
+      const res = await api('/api/rent/pay', {
+        method: 'POST',
+        body: JSON.stringify({ record_id: id })
+      });
+      showToast(`✓ Marked paid! ${res.receipt_no}`);
+      load();
+    } catch (e) {
+      showToast(e.message, "error");
+    }
+  };
+
+  const exportLedger = () => {
+    api('/api/reports/generate', {
+      method: 'POST',
+      body: JSON.stringify({ type: 'Rent ledger', format: 'CSV' })
+    }).then(res => {
+      window.open(API_BASE + res.download_url, '_blank');
+      showToast("✓ Rent ledger CSV exported successfully!");
+    }).catch(e => showToast(e.message, "error"));
+  };
+
+  return (
+    <div className="card">
+      <div className="toolbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <div className="filters">
+          <input className="input" placeholder="Search student or room" value={search} onChange={e => setSearch(e.target.value)} />
+          <select className="select" value={status} onChange={e => setStatus(e.target.value)}>
+            <option>All statuses</option>
+            <option>Due</option>
+            <option>Overdue</option>
+            <option>Paid</option>
+          </select>
+        </div>
+        <div className="quick">
+          <button className="btn ghost" onClick={() => openModal("reminder")}>Send Reminders</button>
+          <button className="btn primary" onClick={exportLedger}>Export Ledger CSV</button>
+        </div>
+      </div>
+
+      <div className="table-wrap">
+        <table className="table">
+          <thead><tr><th>Student</th><th>Room</th><th>Amount</th><th>Due Date</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            {records.map(r => (
+              <tr key={r.id}>
+                <td><b>{r.student_name}</b></td>
+                <td>{r.room}</td>
+                <td>₹{r.amount.toLocaleString()}</td>
+                <td>{r.due_date}</td>
+                <td><Badge status={r.status} /></td>
+                <td>
+                  {r.status !== "Paid" && (
+                    <button className="btn success" style={{ padding: "6px 12px", fontSize: 12 }} onClick={() => markPaid(r.id)}>
+                      Mark Paid
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function AdminStaff({ openModal, showToast }) {
+  const [staff, setStaff] = useState([]);
+
+  const load = useCallback(() => {
+    api('/api/staff').then(res => setStaff(res.staff || [])).catch(console.error);
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  return (
+    <div className="card">
+      <div className="toolbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <h3 style={{ fontFamily: "Fraunces", margin: 0 }}>Warden & Security Staff</h3>
+        <button className="btn primary" onClick={() => openModal("add-staff", load)}>+ Add Staff</button>
+      </div>
+
+      <div className="table-wrap">
+        <table className="table">
+          <thead><tr><th>Staff Name</th><th>Role</th><th>Block / Floor</th><th>Contact</th><th>Status</th></tr></thead>
+          <tbody>
+            {staff.map(s => (
+              <tr key={s.id}>
+                <td><b>{s.name}</b></td>
+                <td>{s.role}</td>
+                <td>{s.block_floor}</td>
+                <td>{s.contact}</td>
+                <td><Badge status={s.status} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function AdminReports({ showToast }) {
+  const [type, setType] = useState("Rent ledger");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [downloadUrl, setDownloadUrl] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const gen = async () => {
+    setLoading(true);
+    try {
+      const res = await api('/api/reports/generate', {
+        method: 'POST',
+        body: JSON.stringify({ type, format: 'CSV', from_date: fromDate, to_date: toDate })
+      });
+      setDownloadUrl(API_BASE + res.download_url);
+      showToast(`✓ Report '${type}' generated successfully!`);
+    } catch (e) {
+      showToast(e.message, "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="grid two">
+      <div className="card">
+        <h3 style={{ fontFamily: "Fraunces", marginBottom: 14 }}>Generate Official Report</h3>
+        <div className="form-grid">
+          <div className="field full">
+            <label>Report Type</label>
+            <select className="select" value={type} onChange={e => setType(e.target.value)}>
+              <option>Rent ledger</option>
+              <option>Occupancy</option>
+              <option>Complaint log</option>
+              <option>Attendance</option>
+            </select>
+          </div>
+          <div className="field"><label>From Date</label><input className="input" type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} /></div>
+          <div className="field"><label>To Date</label><input className="input" type="date" value={toDate} onChange={e => setToDate(e.target.value)} /></div>
+        </div>
+        <div className="modal-actions">
+          <button className="btn primary" onClick={gen} disabled={loading}>
+            {loading ? "Generating..." : "Generate CSV Report"}
+          </button>
+        </div>
+        {downloadUrl && (
+          <div className="success-box" style={{ marginTop: 16 }}>
+            Report ready: <a href={downloadUrl} download style={{ color: "var(--sage)", fontWeight: 700 }}>Click here to download CSV</a>
+          </div>
+        )}
+      </div>
+
+      <div className="card">
+        <h3 style={{ fontFamily: "Fraunces", marginBottom: 14 }}>Instant Downloads</h3>
+        {[
+          { name: "Full Rent Ledger CSV", type: "Rent ledger" },
+          { name: "Hostel Occupancy Roster", type: "Occupancy" },
+          { name: "Complaint Resolution Audit", type: "Complaint log" },
+          { name: "Monthly Attendance Register", type: "Attendance" }
+        ].map((x, i) => (
+          <div className="row" key={i}>
+            <b>{x.name}</b>
+            <button className="btn ghost" style={{ padding: "6px 12px", fontSize: 13 }} onClick={() => {
+              api('/api/reports/generate', { method: 'POST', body: JSON.stringify({ type: x.type }) })
+                .then(res => window.open(API_BASE + res.download_url, '_blank'))
+                .catch(e => showToast(e.message, "error"));
+            }}>Download</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function AdminSettings({ showToast }) {
+  const [settings, setSettings] = useState({
+    hostel_name: "Sakhi Women's Hostel",
+    capacity: "200",
+    occupied: "184",
+    curfew_time: "23:30",
+    last_backup: "Today"
+  });
+
+  useEffect(() => {
+    api('/api/settings').then(res => setSettings(res.settings || {})).catch(console.error);
+  }, []);
+
+  const save = async () => {
+    try {
+      await api('/api/settings', { method: 'PUT', body: JSON.stringify(settings) });
+      showToast("✓ Settings updated successfully!");
+    } catch (e) {
+      showToast(e.message, "error");
+    }
+  };
+
+  const backup = async () => {
+    try {
+      const res = await api('/api/backup', { method: 'POST' });
+      setSettings(prev => ({ ...prev, last_backup: res.last_backup }));
+      showToast(res.message);
+    } catch (e) {
+      showToast(e.message, "error");
+    }
+  };
+
+  return (
+    <div className="grid two">
+      <div className="card">
+        <h3 style={{ fontFamily: "Fraunces", marginBottom: 14 }}>Hostel Configuration</h3>
+        <div className="form-grid">
+          <div className="field full"><label>Hostel Name</label><input className="input" value={settings.hostel_name || ""} onChange={e => setSettings({ ...settings, hostel_name: e.target.value })} /></div>
+          <div className="field"><label>Capacity (Total Beds)</label><input className="input" value={settings.capacity || ""} onChange={e => setSettings({ ...settings, capacity: e.target.value })} /></div>
+          <div className="field"><label>Occupied Beds</label><input className="input" value={settings.occupied || ""} readOnly /></div>
+          <div className="field full"><label>Standard Curfew Cutoff Time</label><input className="input" type="time" value={settings.curfew_time || "23:30"} onChange={e => setSettings({ ...settings, curfew_time: e.target.value })} /></div>
+        </div>
+        <button className="btn primary" style={{ marginTop: 20 }} onClick={save}>Save Parameters</button>
+      </div>
+
+      <div className="card">
+        <h3 style={{ fontFamily: "Fraunces", marginBottom: 14 }}>Database Backup & Safeguard</h3>
+        <div className="success-box">Last Automatic Backup: {settings.last_backup || "None"}</div>
+        <p className="muted" style={{ marginTop: 12 }}>Creates a standalone SQLite snapshot in the backups directory.</p>
+        <button className="btn primary" style={{ marginTop: 12 }} onClick={backup}>Trigger Manual Backup</button>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// 4. SEPARATED LOGIN PORTAL SYSTEM
+// ==========================================
+function SeparatedLoginPortal({ onLoginSuccess, serverOnline }) {
+  const [selectedPortal, setSelectedPortal] = useState("Student"); // "Student" | "Warden" | "Admin"
+  const [studentsList, setStudentsList] = useState([]);
+  const [selectedStudentCode, setSelectedStudentCode] = useState("");
+  const [userCode, setUserCode] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    api('/api/public/students')
+      .then(res => setStudentsList(res.students || []))
+      .catch(console.error);
+  }, []);
+
+  const handlePortalSwitch = (portal) => {
+    setSelectedPortal(portal);
+    setError("");
+    setUserCode("");
+    setPassword("");
+    setSelectedStudentCode("");
+  };
+
+  const selectStudentChip = (s) => {
+    setSelectedStudentCode(s.user_code);
+    setUserCode(s.user_code);
+    setError("");
+  };
+
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      const res = await api('/api/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          role: selectedPortal,
+          user_code: userCode,
+          password: password
+        })
+      });
+      onLoginSuccess(res.user);
+    } catch (err) {
+      setError(err.message || "Invalid credentials for this portal.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="portal-login-screen">
+      <div className="login-container">
+        
+        {/* TOP PORTAL SELECTOR */}
+        <div className="portal-selector-bar">
+          <button
+            className={"portal-pill " + (selectedPortal === "Student" ? "active" : "")}
+            onClick={() => handlePortalSwitch("Student")}
+          >
+            <span>🎓</span> Student Portal
+          </button>
+          <button
+            className={"portal-pill " + (selectedPortal === "Warden" ? "active" : "")}
+            onClick={() => handlePortalSwitch("Warden")}
+          >
+            <span>🛡️</span> Warden Portal
+          </button>
+          <button
+            className={"portal-pill " + (selectedPortal === "Admin" ? "active" : "")}
+            onClick={() => handlePortalSwitch("Admin")}
+          >
+            <span>⚙️</span> Admin Portal
+          </button>
+        </div>
+
+        {/* LOGIN CARD */}
+        <div className="login-card">
+          <div className="login-header">
+            <div className="brand" style={{ justifyContent: "center", border: "none", padding: 0, marginBottom: 10 }}>
+              <div className="brand-mark">S</div>
+              <div style={{ textAlign: "left" }}>
+                <h2>SafeStay</h2>
+                <small>Smart Women Hostel</small>
+              </div>
+            </div>
+
+            {selectedPortal === "Student" && (
+              <>
+                <h1>Resident Student Sign In</h1>
+                <div className="muted">Enter your registered student roll ID and password to access your resident portal.</div>
+              </>
+            )}
+
+            {selectedPortal === "Warden" && (
+              <>
+                <h1>Hostel Warden Portal</h1>
+                <div className="muted">Floor warden clearance, gate pass authorization & attendance management.</div>
+              </>
+            )}
+
+            {selectedPortal === "Admin" && (
+              <>
+                <h1>Central Administration</h1>
+                <div className="muted">Operational oversight, financial ledger records & hostel configuration.</div>
+              </>
+            )}
+          </div>
+
+          {error && <div className="alert" style={{ marginBottom: 18 }}>{error}</div>}
+
+          {/* MULTI-STUDENT QUICK SELECTOR (STUDENT PORTAL ONLY) */}
+          {selectedPortal === "Student" && (
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ fontSize: 12, fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 8 }}>
+                Quick Select Resident Account:
+              </label>
+              <div className="student-chips">
+                {(studentsList.length > 0 ? studentsList : [
+                  { user_code: "STU-2048", name: "Sanskruti Patil", room: "A-204" },
+                  { user_code: "STU-1001", name: "Aarushi Patel", room: "A-101" },
+                  { user_code: "STU-1002", name: "Diya Shah", room: "A-102" },
+                  { user_code: "STU-1003", name: "Isha Nair", room: "A-103" },
+                  { user_code: "STU-1004", name: "Kavya Singh", room: "A-104" },
+                  { user_code: "STU-2004", name: "Riya Das", room: "A-204" }
+                ]).map(s => (
+                  <button
+                    key={s.user_code}
+                    type="button"
+                    className={"student-chip " + (userCode === s.user_code ? "active" : "")}
+                    onClick={() => selectStudentChip(s)}
+                  >
+                    <span className="student-chip-name">{s.name}</span>
+                    <span className="student-chip-room">Room {s.room}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <form onSubmit={handleSignIn}>
+            <div className="field" style={{ marginBottom: 14 }}>
+              <label>
+                {selectedPortal === "Student" ? "Student Roll ID" : selectedPortal === "Warden" ? "Warden Authorization Code" : "Administrator ID"}
+              </label>
+              <input
+                className="input"
+                placeholder={selectedPortal === "Student" ? "Enter Student ID (e.g. STU-2048)" : selectedPortal === "Warden" ? "Enter Warden Code (e.g. WARD-001)" : "Enter Admin ID (e.g. ADMIN-001)"}
+                value={userCode}
+                onChange={e => setUserCode(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="field" style={{ marginBottom: 22 }}>
+              <label>Password</label>
+              <input
+                className="input"
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <button className="btn primary" style={{ width: "100%", padding: "13px", fontSize: 15 }} type="submit" disabled={loading}>
+              {loading ? "Verifying..." : `Enter ${selectedPortal} Portal →`}
+            </button>
+          </form>
+
+          <div style={{ marginTop: 22, display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, color: "var(--muted)" }}>
+            <span>🔒 Encrypted Portal Access</span>
+            <span className="server-status">
+              <span className={`status-dot ${serverOnline ? 'online' : 'offline'}`}></span>
+              {serverOnline ? 'Database Connected' : 'Connecting'}
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// 5. INTERACTIVE MODAL COMPONENT
+// ==========================================
+function InteractiveModal({ type, close, callback, currentUser, showToast }) {
+  const [form, setForm] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+
+  const submit = async () => {
+    setSubmitting(true);
+    try {
+      if (type === "complaint") {
+        await api('/api/complaints', {
+          method: 'POST',
+          body: JSON.stringify({
+            student_code: currentUser.user_code,
+            category: form.category || "Maintenance",
+            room: form.room || currentUser.room || "A-204",
+            title: form.title || form.description?.slice(0, 30) || "Hostel Maintenance Request",
+            description: form.description || ""
+          })
+        });
+        showToast("✓ Complaint submitted successfully!");
+      } else if (type === "exit") {
+        await api('/api/exit-requests', {
+          method: 'POST',
+          body: JSON.stringify({
+            student_code: currentUser.user_code,
+            date_str: form.date_str || new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
+            time_out: form.time_out || "08:00 PM",
+            expected_return: form.expected_return || "11:30 PM",
+            reason: form.reason || "Personal"
+          })
+        });
+        showToast("✓ Exit request sent to Warden for clearance!");
+      } else if (type === "scan") {
+        const res = await api('/api/gate/scan', {
+          method: 'POST',
+          body: JSON.stringify({ code: form.code })
+        });
+        showToast(res.message);
+      } else if (type === "notice") {
+        await api('/api/notices', {
+          method: 'POST',
+          body: JSON.stringify({
+            title: form.title,
+            body: form.body,
+            priority: form.priority === "Priority"
+          })
+        });
+        showToast("✓ Announcement published!");
+      } else if (type === "reminder") {
+        const res = await api('/api/rent/remind', { method: 'POST' });
+        showToast(res.message);
+      } else if (type === "add-student") {
+        const res = await api('/api/students', {
+          method: 'POST',
+          body: JSON.stringify(form)
+        });
+        showToast(`✓ New student enrolled! ID: ${res.user_code || ''} (Password: password)`);
+      } else if (type === "add-staff") {
+        await api('/api/staff', {
+          method: 'POST',
+          body: JSON.stringify(form)
+        });
+        showToast("✓ Staff member added!");
+      } else if (type === "export") {
+        const res = await api('/api/reports/generate', {
+          method: 'POST',
+          body: JSON.stringify({ type: form.type || 'Rent ledger', format: 'CSV' })
+        });
+        window.open(API_BASE + res.download_url, '_blank');
+        showToast("✓ Operational data snapshot exported to CSV!");
+      }
+      if (callback) callback();
+      close();
+    } catch (e) {
+      showToast(e.message, "error");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const titles = {
+    complaint: "Raise a Hostel Complaint",
+    exit: "Apply for Leave / Exit Clearance",
+    scan: "Hostel Gate Pass Scanner",
+    notice: "Publish Notice to Residents",
+    reminder: "Dispatch Rent Reminders",
+    export: "Export Live Dashboard Metrics",
+    "add-student": "Enroll New Resident Student",
+    "add-staff": "Add Warden / Security Staff"
+  };
+
+  return (
+    <div className="modal-backdrop" onMouseDown={e => e.target === e.currentTarget && close()}>
+      <div className="modal">
+        <div className="modal-head">
+          <h2>{titles[type] || "Action"}</h2>
+          <button className="close" onClick={close}>×</button>
+        </div>
+
+        {type === "complaint" && (
+          <div className="form-grid">
+            <div className="field">
+              <label>Category</label>
+              <select className="select" defaultValue="Maintenance" onChange={e => setForm({ ...form, category: e.target.value })}>
+                <option>Maintenance</option>
+                <option>Internet</option>
+                <option>Mess</option>
+                <option>Safety</option>
+              </select>
+            </div>
+            <div className="field">
+              <label>Room / Wing</label>
+              <input className="input" defaultValue={currentUser?.room || "A-204"} onChange={e => setForm({ ...form, room: e.target.value })} />
+            </div>
+            <div className="field full">
+              <label>Issue Headline</label>
+              <input className="input" placeholder="e.g. Geyser not heating properly" onChange={e => setForm({ ...form, title: e.target.value })} />
+            </div>
+            <div className="field full">
+              <label>Description Details</label>
+              <textarea className="textarea" placeholder="Provide details to help the maintenance team..." onChange={e => setForm({ ...form, description: e.target.value })}></textarea>
+            </div>
+          </div>
+        )}
+
+        {type === "exit" && (
+          <div className="form-grid">
+            <div className="field"><label>Date</label><input className="input" type="date" defaultValue={new Date().toISOString().split('T')[0]} onChange={e => setForm({ ...form, date_str: e.target.value })} /></div>
+            <div className="field"><label>Departure Time</label><input className="input" type="time" defaultValue="20:00" onChange={e => setForm({ ...form, time_out: e.target.value })} /></div>
+            <div className="field"><label>Expected Return Time</label><input className="input" type="time" defaultValue="23:30" onChange={e => setForm({ ...form, expected_return: e.target.value })} /></div>
+            <div className="field">
+              <label>Reason</label>
+              <select className="select" defaultValue="Personal" onChange={e => setForm({ ...form, reason: e.target.value })}>
+                <option>Personal</option>
+                <option>Family event</option>
+                <option>College work</option>
+                <option>Library / Study group</option>
+                <option>Medical visit</option>
+              </select>
+            </div>
+          </div>
+        )}
+
+        {type === "scan" && (
+          <div>
+            <div className="qr-box"></div>
+            <p className="muted" style={{ textAlign: "center", marginBottom: 14 }}>
+              Enter Resident Student Roll ID or Exit Pass Code to check in/out:
+            </p>
+            <input
+              className="input"
+              style={{ width: "100%", fontSize: 16 }}
+              placeholder="e.g. STU-2048 or EX-2048"
+              autoFocus
+              onChange={e => setForm({ ...form, code: e.target.value })}
+              onKeyDown={e => e.key === "Enter" && submit()}
+            />
+          </div>
+        )}
+
+        {type === "notice" && (
+          <div className="form-grid">
+            <div className="field full"><label>Notice Headline</label><input className="input" placeholder="Notice headline..." onChange={e => setForm({ ...form, title: e.target.value })} /></div>
+            <div className="field full"><label>Body Content</label><textarea className="textarea" placeholder="Write announcement details..." onChange={e => setForm({ ...form, body: e.target.value })}></textarea></div>
+            <div className="field"><label>Priority Flag</label><select className="select" defaultValue="Normal" onChange={e => setForm({ ...form, priority: e.target.value })}><option>Normal</option><option>Priority</option></select></div>
+          </div>
+        )}
+
+        {type === "reminder" && (
+          <div>
+            <p>You are broadcasting automated payment reminders to residents with pending fee dues.</p>
+            <div className="alert" style={{ marginTop: 12 }}>Notifications will be dispatched via registered channels.</div>
+          </div>
+        )}
+
+        {type === "export" && (
+          <div>
+            <p>Export operational data snapshot to CSV:</p>
+            <div className="form-grid" style={{ marginTop: 12 }}>
+              <div className="field">
+                <label>Report Type</label>
+                <select className="select" defaultValue="Rent ledger" onChange={e => setForm({ ...form, type: e.target.value })}>
+                  <option>Rent ledger</option>
+                  <option>Occupancy</option>
+                  <option>Complaint log</option>
+                  <option>Attendance</option>
+                </select>
+              </div>
+              <div className="field"><label>Format</label><select className="select"><option>CSV</option></select></div>
+            </div>
+          </div>
+        )}
+
+        {type === "add-student" && (
+          <div className="form-grid">
+            <div className="field"><label>Full Name</label><input className="input" placeholder="e.g. Ananya Roy" onChange={e => setForm({ ...form, name: e.target.value })} /></div>
+            <div className="field"><label>Room Number</label><input className="input" placeholder="e.g. A-105" onChange={e => setForm({ ...form, room: e.target.value })} /></div>
+            <div className="field"><label>Course & Dept</label><input className="input" placeholder="e.g. B.Tech CS" onChange={e => setForm({ ...form, course: e.target.value })} /></div>
+            <div className="field"><label>Phone Number</label><input className="input" placeholder="e.g. 98765 43210" onChange={e => setForm({ ...form, phone: e.target.value })} /></div>
+          </div>
+        )}
+
+        {type === "add-staff" && (
+          <div className="form-grid">
+            <div className="field"><label>Staff Name</label><input className="input" placeholder="e.g. Sunita Kulkarni" onChange={e => setForm({ ...form, name: e.target.value })} /></div>
+            <div className="field"><label>Role / Designation</label><input className="input" placeholder="e.g. Assistant Warden" onChange={e => setForm({ ...form, role: e.target.value })} /></div>
+            <div className="field"><label>Block Assignment</label><input className="input" placeholder="e.g. Block A • Floor 2" onChange={e => setForm({ ...form, block_floor: e.target.value })} /></div>
+            <div className="field"><label>Phone Contact</label><input className="input" placeholder="e.g. +91 98765 30005" onChange={e => setForm({ ...form, contact: e.target.value })} /></div>
+          </div>
+        )}
+
+        <div className="modal-actions">
+          <button className="btn ghost" onClick={close} disabled={submitting}>Cancel</button>
+          <button className="btn primary" onClick={submit} disabled={submitting}>
+            {submitting ? "Processing..." : type === "scan" ? "Log Gate Movement" : "Confirm & Submit"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// 6. MAIN APPLICATION ROOT
+// ==========================================
+function App() {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [toasts, setToasts] = useState([]);
+  const [serverOnline, setServerOnline] = useState(false);
+
+  const showToast = useCallback((msg, type = "success") => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, msg, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 4000);
+  }, []);
+
+  // Heartbeat to check backend health
+  useEffect(() => {
+    const check = () => {
+      api('/api/health')
+        .then(() => setServerOnline(true))
+        .catch(() => setServerOnline(false));
+    };
+    check();
+    const timer = setInterval(check, 10000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleLoginSuccess = (user) => {
+    setCurrentUser(user);
+    showToast(`Signed in to ${user.role} Portal as ${user.name}`);
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    showToast("Signed out successfully.");
+  };
+
+  return (
+    <>
+      {!currentUser ? (
+        <SeparatedLoginPortal onLoginSuccess={handleLoginSuccess} serverOnline={serverOnline} />
+      ) : currentUser.role === "Student" ? (
+        <StudentPortal currentUser={currentUser} onLogout={handleLogout} showToast={showToast} />
+      ) : currentUser.role === "Warden" ? (
+        <WardenPortal currentUser={currentUser} onLogout={handleLogout} showToast={showToast} />
+      ) : (
+        <AdminPortal currentUser={currentUser} onLogout={handleLogout} showToast={showToast} />
+      )}
+
+      <div className="toast-container">
+        {toasts.map(t => (
+          <div key={t.id} className={`toast ${t.type}`}>{t.msg}</div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
